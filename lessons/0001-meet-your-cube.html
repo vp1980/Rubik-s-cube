@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 1: Meet Your Cube!</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f4ff;
+      color: #222;
+      line-height: 1.7;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      background: linear-gradient(135deg, #ff6b6b 0%, #ffd93d 40%, #6bcb77 70%, #4d96ff 100%);
+      padding: 60px 20px 50px;
+      text-align: center;
+      color: white;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    }
+    .lesson-pill {
+      display: inline-block;
+      background: rgba(255,255,255,0.25);
+      padding: 4px 18px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      margin-bottom: 18px;
+      letter-spacing: 0.05em;
+    }
+    .hero h1 { font-size: 2.8em; margin-bottom: 12px; }
+    .hero p  { font-size: 1.2em; opacity: 0.95; }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 40px 20px 60px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 30px 35px;
+      margin-bottom: 28px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+    }
+
+    h2 { font-size: 1.65em; margin-bottom: 14px; color: #1a1a2e; }
+    h3 { font-size: 1.15em; margin: 18px 0 8px; color: #444; }
+    p  { font-size: 1.05em; margin-bottom: 14px; }
+
+    /* ── Tip box ── */
+    .tip {
+      background: #eff6ff;
+      border-left: 5px solid #3b82f6;
+      border-radius: 0 12px 12px 0;
+      padding: 14px 18px;
+      margin: 18px 0;
+      font-size: 1em;
+    }
+    .tip strong { color: #1d4ed8; }
+
+    /* ── Piece type summary cards ── */
+    .piece-grid {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin: 22px 0;
+    }
+    .piece-type {
+      flex: 1;
+      min-width: 180px;
+      border-radius: 16px;
+      padding: 22px 16px;
+      text-align: center;
+    }
+    .piece-type.c { background: #fffbeb; border: 3px solid #f59e0b; }
+    .piece-type.e { background: #faf5ff; border: 3px solid #8b5cf6; }
+    .piece-type.k { background: #fff1f2; border: 3px solid #f43f5e; }
+
+    .piece-type .icon  { font-size: 2em; }
+    .piece-type .name  { font-size: 1.1em; font-weight: 700; margin: 6px 0 4px; }
+    .piece-type .count { font-size: 2.4em; font-weight: 800; display: block; margin-bottom: 4px; }
+    .piece-type.c .count { color: #d97706; }
+    .piece-type.e .count { color: #7c3aed; }
+    .piece-type.k .count { color: #e11d48; }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 0.8em;
+      font-weight: 600;
+    }
+    .badge-c { background: #fde68a; color: #78350f; }
+    .badge-e { background: #ddd6fe; color: #3b0764; }
+    .badge-k { background: #fecdd3; color: #881337; }
+
+    /* ── Cube face diagram ── */
+    .diagrams {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      align-items: center;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .diagram-wrap { text-align: center; }
+    .diagram-wrap p { font-size: 0.82em; color: #666; margin-top: 8px; margin-bottom: 0; }
+
+    .face {
+      display: inline-grid;
+      grid-template-columns: repeat(3, 52px);
+      grid-template-rows: repeat(3, 52px);
+      gap: 4px;
+      background: #2a2a2a;
+      border: 4px solid #2a2a2a;
+      border-radius: 10px;
+    }
+    .sq {
+      width: 52px;
+      height: 52px;
+      border-radius: 5px;
+    }
+
+    /* Cube colours */
+    .wh { background: #f8f8f8; border: 1px solid #ddd; }
+    .ye { background: #FFD500; }
+    .re { background: #C41E3A; }
+    .or { background: #FF5800; }
+    .bl { background: #003DA5; }
+    .gr { background: #009B48; }
+    .gy { background: #c8c8c8; border: 1px solid #aaa; }
+
+    /* Highlight rings */
+    .h-gold { outline: 4px solid #f59e0b; outline-offset: 0; box-shadow: 0 0 10px rgba(245,158,11,0.5); position: relative; z-index: 1; }
+    .h-purp { outline: 4px solid #8b5cf6; outline-offset: 0; box-shadow: 0 0 10px rgba(139,92,246,0.5); position: relative; z-index: 1; }
+    .h-pink { outline: 4px solid #f43f5e; outline-offset: 0; box-shadow: 0 0 10px rgba(244,63,94,0.5);  position: relative; z-index: 1; }
+
+    /* ── Golden rule box ── */
+    .golden {
+      background: linear-gradient(135deg, #fffbeb, #fef9c3);
+      border: 3px solid #f59e0b;
+      border-radius: 16px;
+      padding: 26px;
+      text-align: center;
+      margin: 20px 0;
+    }
+    .golden p { font-size: 1.15em; margin: 0; }
+    .golden .subtext { font-size: 0.95em; color: #555; margin-top: 10px; }
+
+    /* ── Quiz ── */
+    .quiz-q {
+      background: #f8faff;
+      border-left: 5px solid #4d96ff;
+      border-radius: 0 14px 14px 0;
+      padding: 20px 22px;
+      margin: 18px 0;
+    }
+    .quiz-q > p { font-weight: 700; font-size: 1.05em; margin-bottom: 14px; }
+    .options { display: flex; flex-wrap: wrap; gap: 10px; }
+
+    .opt {
+      padding: 10px 22px;
+      border-radius: 10px;
+      border: 2px solid #4d96ff;
+      background: white;
+      color: #333;
+      font-size: 1em;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .opt:hover:not(:disabled) { background: #dbeafe; }
+    .opt.correct { background: #22c55e; border-color: #16a34a; color: white; }
+    .opt.wrong   { background: #ef4444; border-color: #dc2626; color: white; }
+    .opt.show-correct { background: #86efac; border-color: #16a34a; }
+
+    .fb { margin-top: 12px; font-weight: 600; min-height: 1.4em; font-size: 1em; }
+    .fb.ok  { color: #15803d; }
+    .fb.err { color: #b91c1c; }
+
+    .score-bar {
+      display: none;
+      text-align: center;
+      margin-top: 24px;
+      font-size: 1.4em;
+      font-weight: 700;
+      padding: 18px;
+      border-radius: 14px;
+    }
+    .score-bar.great  { background: #dcfce7; color: #15803d; }
+    .score-bar.good   { background: #fef9c3; color: #854d0e; }
+    .score-bar.tryagain { background: #fee2e2; color: #991b1b; }
+
+    /* ── Next up ── */
+    .next-up {
+      background: linear-gradient(135deg, #4d96ff, #8b5cf6);
+      border-radius: 20px;
+      padding: 34px;
+      text-align: center;
+      color: white;
+    }
+    .next-up h2 { color: white; font-size: 1.5em; }
+    .next-up p  { opacity: 0.92; }
+    .next-up .ask { margin-top: 20px; font-size: 0.9em; opacity: 0.8; }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 28px 20px;
+      font-size: 0.82em;
+      color: #999;
+    }
+    footer a { color: #4d96ff; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── Responsive ── */
+    @media (max-width: 540px) {
+      .hero h1 { font-size: 2em; }
+      .face { grid-template-columns: repeat(3, 42px); grid-template-rows: repeat(3, 42px); }
+      .sq { width: 42px; height: 42px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<div class="hero">
+  <div class="lesson-pill">Lesson 1 of 7</div>
+  <h1>&#x1F9E9; Meet Your Cube!</h1>
+  <p>Before you can solve it, you need to understand it.</p>
+</div>
+
+<div class="container">
+
+  <!-- ── Welcome ── -->
+  <div class="card">
+    <h2>&#x1F44B; Hello, future Cube Master!</h2>
+    <p>You have a Rubik's Cube! &#x1F389; The cube looks really, really hard. But there is a <strong>secret</strong>: once you understand <em>how the cube works</em>, you can learn to solve it step by step.</p>
+    <p>In this first lesson, we will look closely at the cube and discover the <strong>3 kinds of pieces</strong> inside it. This is the very first thing every solver needs to know.</p>
+    <div class="tip">
+      <strong>&#x1F4A1; Tip:</strong> Pick up your real Rubik's Cube and hold it while you read! Look for each piece as we describe it.
+    </div>
+  </div>
+
+  <!-- ── 3 Types Overview ── -->
+  <div class="card">
+    <h2>&#x1F3AF; 3 Kinds of Pieces</h2>
+    <p>Look at one face (one side) of your cube. You will see <strong>9 coloured squares</strong>. But those 9 squares belong to <strong>3 completely different types of pieces</strong>!</p>
+
+    <div class="piece-grid">
+      <div class="piece-type c">
+        <div class="icon">&#x2B50;</div>
+        <div class="name">Centers</div>
+        <span class="count">6</span>
+        <span class="badge badge-c">1 colour each</span>
+        <p style="font-size:0.88em;margin-top:10px;">One sits in the middle of each face.</p>
+      </div>
+      <div class="piece-type e">
+        <div class="icon">&#x1F7E3;</div>
+        <div class="name">Edges</div>
+        <span class="count">12</span>
+        <span class="badge badge-e">2 colours each</span>
+        <p style="font-size:0.88em;margin-top:10px;">They sit between two centers.</p>
+      </div>
+      <div class="piece-type k">
+        <div class="icon">&#x1F534;</div>
+        <div class="name">Corners</div>
+        <span class="count">8</span>
+        <span class="badge badge-k">3 colours each</span>
+        <p style="font-size:0.88em;margin-top:10px;">They sit at every corner.</p>
+      </div>
+    </div>
+
+    <p>Total pieces: 6 + 12 + 8 = <strong>26 pieces</strong> (plus an invisible core inside that holds it together).</p>
+  </div>
+
+  <!-- ── Centers ── -->
+  <div class="card">
+    <h2>&#x2B50; Centers: The Leaders</h2>
+    <p>There are <strong>6 center pieces</strong> — one in the middle of each face. Each center has only <strong>one colour</strong>.</p>
+
+    <div class="diagrams">
+      <div class="diagram-wrap">
+        <div class="face">
+          <div class="sq gy"></div><div class="sq gy"></div><div class="sq gy"></div>
+          <div class="sq gy"></div><div class="sq wh h-gold"></div><div class="sq gy"></div>
+          <div class="sq gy"></div><div class="sq gy"></div><div class="sq gy"></div>
+        </div>
+        <p>&#x2B50; The center has the gold glow.</p>
+      </div>
+    </div>
+
+    <p>Here is the <strong>most important fact</strong> about center pieces:</p>
+    <div class="golden">
+      <p>&#x1F6AB; <strong>Centers NEVER move!</strong></p>
+      <p class="subtext">No matter how many times you spin the faces, the centers always stay in the same spots relative to each other.</p>
+    </div>
+
+    <p>Because centers never move, they tell you what colour each face will be when the cube is solved. The face with the <strong>white center</strong> will be the white face. The face with the <strong>red center</strong> will be the red face. And so on!</p>
+
+    <div class="tip">
+      <strong>&#x1F4A1; Try it!</strong> Spin your cube many times. Can you move the white center to a different spot? You can't! It always stays in the same place.
+    </div>
+  </div>
+
+  <!-- ── Edges ── -->
+  <div class="card">
+    <h2>&#x1F7E3; Edges: The Go-Betweens</h2>
+    <p><strong>Edge pieces</strong> live between two center pieces. Each edge piece shows <strong>2 different colours</strong> — one colour for each face it touches.</p>
+
+    <div class="diagrams">
+      <div class="diagram-wrap">
+        <div class="face">
+          <div class="sq gy"></div><div class="sq wh h-purp"></div><div class="sq gy"></div>
+          <div class="sq wh h-purp"></div><div class="sq wh h-gold"></div><div class="sq wh h-purp"></div>
+          <div class="sq gy"></div><div class="sq wh h-purp"></div><div class="sq gy"></div>
+        </div>
+        <p>&#x1F7E3; The 4 edge squares on one face.</p>
+      </div>
+    </div>
+
+    <p>There are <strong>12 edge pieces</strong> on the whole cube. Each one connects two faces. For example, the edge piece between the <strong>white face</strong> and the <strong>red face</strong> has a white side AND a red side.</p>
+
+    <p>To solve the cube, every edge piece has to go to its correct <strong>home</strong> — between the two centers that match its colours.</p>
+
+    <div class="tip">
+      <strong>&#x1F4A1; Try it!</strong> Find an edge piece on your cube. Tip it to see both colours. Now find the two center pieces with those same colours — that is where this edge needs to go!
+    </div>
+  </div>
+
+  <!-- ── Corners ── -->
+  <div class="card">
+    <h2>&#x1F534; Corners: The Three-Colour Pieces</h2>
+    <p><strong>Corner pieces</strong> live at the eight corners of the cube. Each corner piece shows <strong>3 different colours</strong> — one for each face it touches.</p>
+
+    <div class="diagrams">
+      <div class="diagram-wrap">
+        <div class="face">
+          <div class="sq wh h-pink"></div><div class="sq gy"></div><div class="sq wh h-pink"></div>
+          <div class="sq gy"></div><div class="sq wh h-gold"></div><div class="sq gy"></div>
+          <div class="sq wh h-pink"></div><div class="sq gy"></div><div class="sq wh h-pink"></div>
+        </div>
+        <p>&#x1F534; The 4 corner squares on one face.</p>
+      </div>
+    </div>
+
+    <p>There are <strong>8 corner pieces</strong> on the whole cube. Each corner connects <em>three</em> faces at once!</p>
+
+    <p>Just like edges, every corner has a correct home — the corner where all three of its colours match the three center pieces nearby.</p>
+
+    <div class="tip">
+      <strong>&#x1F4A1; Try it!</strong> Find a corner piece on your cube. Can you see all 3 colours? Now find the three center pieces with those same colours — that is where this corner belongs!
+    </div>
+  </div>
+
+  <!-- ── Full face diagram ── -->
+  <div class="card">
+    <h2>&#x1F4CB; Putting It All Together</h2>
+    <p>Here is one face of a solved cube. Can you spot all three piece types?</p>
+
+    <div class="diagrams">
+      <div class="diagram-wrap">
+        <div class="face">
+          <div class="sq wh h-pink"></div><div class="sq wh h-purp"></div><div class="sq wh h-pink"></div>
+          <div class="sq wh h-purp"></div><div class="sq wh h-gold"></div><div class="sq wh h-purp"></div>
+          <div class="sq wh h-pink"></div><div class="sq wh h-purp"></div><div class="sq wh h-pink"></div>
+        </div>
+        <p>&#x2B50; Gold = center &nbsp; &#x1F7E3; Purple = edges &nbsp; &#x1F534; Pink = corners</p>
+      </div>
+    </div>
+
+    <p>On each face you can see: <strong>1 center</strong>, <strong>4 edges</strong>, and <strong>4 corners</strong>. That is 9 squares — the whole face!</p>
+  </div>
+
+  <!-- ── Golden Rule ── -->
+  <div class="card">
+    <h2>&#x1F31F; The Solving Secret</h2>
+    <p>Now you know the Golden Rule: <strong>centers never move</strong>. So what does solving the cube really mean?</p>
+    <div class="golden">
+      <p>&#x1F3E0; Solving the cube = sending every piece <strong>home</strong>.</p>
+      <p class="subtext">Every edge and corner has a correct home — the spot where its colours match the nearby centers. When ALL pieces are home, the cube is solved!</p>
+    </div>
+    <p>Think of it like a jigsaw puzzle. You are just putting every piece into its correct spot — without knocking the other pieces out of place. That is the whole game!</p>
+    <p>In the next lesson, you will learn the <strong>names of the six faces</strong> so you can follow the step-by-step instructions for solving.</p>
+  </div>
+
+  <!-- ── Quiz ── -->
+  <div class="card">
+    <h2>&#x1F9E0; Quick Quiz!</h2>
+    <p>Let's see what you remember. Pick the best answer for each question!</p>
+
+    <!-- Q1 -->
+    <div class="quiz-q" id="q1">
+      <p>1. How many <strong>center pieces</strong> does a Rubik's Cube have?</p>
+      <div class="options">
+        <button class="opt" onclick="ans(this,'q1',false)" data-val="4">4</button>
+        <button class="opt" onclick="ans(this,'q1',false)" data-val="9">9</button>
+        <button class="opt" onclick="ans(this,'q1',true)"  data-val="6">6</button>
+        <button class="opt" onclick="ans(this,'q1',false)" data-val="12">12</button>
+      </div>
+      <div class="fb" id="q1-fb"></div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="quiz-q" id="q2">
+      <p>2. You pick up a piece and see it has <strong>2 colours</strong> on it. What type of piece is it?</p>
+      <div class="options">
+        <button class="opt" onclick="ans(this,'q2',false)">A center</button>
+        <button class="opt" onclick="ans(this,'q2',true)">An edge</button>
+        <button class="opt" onclick="ans(this,'q2',false)">A corner</button>
+      </div>
+      <div class="fb" id="q2-fb"></div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="quiz-q" id="q3">
+      <p>3. You scramble the cube lots of times. Where does the <strong>blue center</strong> end up?</p>
+      <div class="options">
+        <button class="opt" onclick="ans(this,'q3',false)">It moves around!</button>
+        <button class="opt" onclick="ans(this,'q3',true)">It stays in the same spot always.</button>
+        <button class="opt" onclick="ans(this,'q3',false)">It goes to the bottom.</button>
+      </div>
+      <div class="fb" id="q3-fb"></div>
+    </div>
+
+    <div class="score-bar" id="score-display"></div>
+  </div>
+
+  <!-- ── Next Up ── -->
+  <div class="next-up">
+    <h2>&#x1F680; Great work!</h2>
+    <p>You now know the 3 types of pieces and the Golden Rule. You are already thinking like a real cube solver!</p>
+    <p style="margin-top:14px;">&#x27A1; <strong>Next lesson:</strong> The names of the six faces — and your very first move on the cube!</p>
+    <p class="ask">&#x1F4AC; Got a question about this lesson? Just type it in the chat — your teacher is here to help!</p>
+  </div>
+
+</div><!-- /container -->
+
+<footer>
+  Lesson 1 &bull; Rubik's Cube for Kids &bull;
+  Sources:
+  <a href="https://ruwix.com/the-rubiks-cube/how-to-solve-the-rubiks-cube-beginners-method/" target="_blank">Ruwix</a> &bull;
+  <a href="https://solvethecube.com/" target="_blank">SolveTheCube</a> &bull;
+  <a href="https://www.cubeskills.com/uploads/pdf/tutorials/the-beginners-method-for-solving-the-rubiks-cube.pdf" target="_blank">CubeSkills PDF</a>
+</footer>
+
+<script>
+  const msg = {
+    q1: {
+      ok:  '&#x1F389; Correct! There are 6 centers — one for each of the 6 faces of the cube!',
+      err: 'Not quite. There are 6 centers — one on each face of the cube. A cube has 6 faces!'
+    },
+    q2: {
+      ok:  '&#x1F389; Correct! Edge pieces always have exactly 2 colours.',
+      err: 'Not quite! A piece with 2 colours is an edge. Centers have 1 colour, corners have 3 colours.'
+    },
+    q3: {
+      ok:  '&#x1F389; Correct! Centers NEVER move — that is the Golden Rule!',
+      err: 'Not quite! Centers never move, no matter what. That is the Golden Rule. Try scrambling your cube and checking!'
+    }
+  };
+
+  const answered = {};
+  let score = 0;
+
+  function ans(btn, qId, isCorrect) {
+    if (answered[qId]) return;
+    answered[qId] = true;
+
+    const allBtns = btn.closest('.options').querySelectorAll('.opt');
+    allBtns.forEach(b => { b.disabled = true; });
+
+    const fb = document.getElementById(qId + '-fb');
+
+    if (isCorrect) {
+      btn.classList.add('correct');
+      fb.innerHTML = msg[qId].ok;
+      fb.className = 'fb ok';
+      score++;
+    } else {
+      btn.classList.add('wrong');
+      fb.innerHTML = msg[qId].err;
+      fb.className = 'fb err';
+      // Highlight the correct button for guidance
+      allBtns.forEach(b => {
+        if (b.getAttribute('onclick').includes('true')) {
+          b.classList.add('show-correct');
+        }
+      });
+    }
+
+    if (Object.keys(answered).length === 3) {
+      const sd = document.getElementById('score-display');
+      sd.style.display = 'block';
+      if (score === 3) {
+        sd.className = 'score-bar great';
+        sd.innerHTML = '&#x1F31F; Perfect! 3 out of 3 — you are a natural!';
+      } else if (score === 2) {
+        sd.className = 'score-bar good';
+        sd.innerHTML = '&#x1F44D; Great job! 2 out of 3. Read back over the lesson and try again!';
+      } else {
+        sd.className = 'score-bar tryagain';
+        sd.innerHTML = '&#x1F4AA; ' + score + ' out of 3. Read the lesson again — you will get it!';
+      }
+    }
+  }
+</script>
+
+</body>
+</html>
