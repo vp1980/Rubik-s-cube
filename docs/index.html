@@ -132,6 +132,7 @@ const PARTS=[
  {k:"C",name:"Reading",sub:"Read the story twice, then answer"},
  {k:"D",name:"Words & Logic",sub:"8 puzzles"},
  {k:"E",name:"Shapes & Patterns",sub:"7 puzzles"}];
+const FIXED = null;   // a file sent to one family is locked to that pupil
 const KEY="puzzleset1";
 const keyFor = p => KEY+"-"+(p||"p1");
 const LETTERS=["a","b","c","d","e"];
@@ -145,7 +146,7 @@ function readFor(p){ try{ const r=localStorage.getItem(keyFor(p));
 // pupil it belongs to; three children sharing one browser keep separate papers.
 function load(){
   let best=null;
-  ["p1","p2","p3"].forEach(p=>{ const x=readFor(p);
+  (FIXED?[FIXED]:["p1","p2","p3"]).forEach(p=>{ const x=readFor(p);
     if(x && x.started && !x.finished){
       if(!best || (x.updated||"") > (best.updated||"")) best=x; } });
   if(best){ S=best; return true; }
@@ -202,7 +203,7 @@ function renderNav(){
   const b=document.getElementById("begin"), bk=document.getElementById("back"),
         nx=document.getElementById("next");
   if(b) b.onclick=()=>{ const sel=document.querySelector('input[name="pupil"]:checked');
-    const who = sel? sel.value : "p1";
+    const who = FIXED || (sel? sel.value : "p1");
     const saved = readFor(who);
     if(saved && saved.started && !saved.finished) S=saved; else { S=fresh(); S.p=who; }
     S.p=who; S.started=S.started||new Date().toISOString();
@@ -239,11 +240,13 @@ function intro(){
   '<div class="panel"><p><b>This is not a test and there is no pass mark.</b> It finds out what you already know, so that everything afterwards is pitched at the right level for you.</p>'+
   '<p>Some will be easy. Some cover things you have not been taught yet — that is deliberate, and leaving one blank tells us something useful.</p>'+
   '<p><b>Your answers save as you go</b>, so you can stop and come back — except Part A, which is four minutes on a clock and has to be done in one go. Do that part when you will not be interrupted.</p></div>'+
-  '<div class="q"><div class="qt">Who is this?</div><div class="opts">'+
-  ["p1","p2","p3"].map((p,i)=>'<label class="opt"><input type="radio" name="pupil" value="'+p+
-    '"'+(S.p===p||(!S.p&&i===0)?" checked":"")+'><span class="kbd">'+(i+1)+
-    '</span><span>Pupil '+(i+1)+'</span></label>').join("")+
-  '</div></div>';
+  (FIXED
+    ? '<div class="q"><div class="qt">This paper is for <b>Pupil '+FIXED.slice(1)+'</b>.</div></div>'
+    : '<div class="q"><div class="qt">Who is this?</div><div class="opts">'+
+      ["p1","p2","p3"].map((p,i)=>'<label class="opt"><input type="radio" name="pupil" value="'+p+
+        '"'+(S.p===p||(!S.p&&i===0)?" checked":"")+'><span class="kbd">'+(i+1)+
+        '</span><span>Pupil '+(i+1)+'</span></label>').join("")+
+      '</div></div>');
 }
 function part(p){
   let h='<h2 class="ph">'+(p.timed?"":"Part "+p.k+" · ")+p.name+'</h2><p class="sub">'+p.sub+'</p>';
