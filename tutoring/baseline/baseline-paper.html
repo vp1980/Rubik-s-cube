@@ -34,7 +34,7 @@ header{border-bottom:3px solid var(--accent);padding-bottom:20px;margin-bottom:8
 h1{font-size:2rem;margin:0 0 6px;letter-spacing:-.01em}
 .sub{color:var(--muted);font-size:.95rem;margin:0}
 .namebar{display:flex;gap:24px;flex-wrap:wrap;margin:22px 0 0;font-size:.95rem}
-.namebar span{flex:1 1 180px;border-bottom:1px solid var(--rule);padding-bottom:4px}
+.namebar span{flex:1 1 150px;border-bottom:1px solid var(--rule);padding-bottom:4px}
 .intro{background:var(--accent-soft);border-left:4px solid var(--accent);
   padding:16px 20px;margin:28px 0;font-size:.95rem}
 .intro p{margin:0 0 10px}.intro p:last-child{margin:0}
@@ -52,7 +52,8 @@ ol li{margin-bottom:16px}
 .sprint li::before{content:counter(s) ".";color:var(--muted);font-size:.85rem;
   min-width:24px;text-align:right}
 .sprint .q{flex:1}
-.sprint .ans{display:inline-block;min-width:62px;border-bottom:1px solid var(--rule)}
+.sprint .q{white-space:nowrap}
+.sprint .ans{flex:1;min-width:46px;border-bottom:1px solid var(--rule)}
 @media(min-width:620px){.sprint{grid-template-columns:repeat(4,1fr)}}
 .passage{background:var(--box);border:1px solid var(--rule);border-radius:4px;
   padding:22px 26px;margin:18px 0 28px;box-shadow:0 1px 3px var(--shadow)}

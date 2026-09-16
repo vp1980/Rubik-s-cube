@@ -55,6 +55,9 @@ much they matter:
    deleted today is still recoverable from every clone, and "delete this
    child's data" — a request a parent is entitled to make — becomes a history
    rewrite rather than moving a folder to the bin.
+   This applies whether or not you charge: UK GDPR governs the processing of
+   personal data, not commercial activity, so a tutor holding these records
+   during an unpaid trial is a controller from the first session.
 2. **Parents will not use it.** A parent photographing homework on a phone at
    9pm will not clone, commit and push. Any friction here does not slow the
    system down, it stops it — and the loop breaks *silently*, which is worse,
