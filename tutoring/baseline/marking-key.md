@@ -43,10 +43,26 @@ different programme from one scoring 40/67 the other way round.
 | 5 | 12 | 10 | 9 | 15 | 210 | 20 | 135 |
 
 **This is the single highest-signal item in the paper.** Record two numbers:
-**attempted** and **correct**.
+**attempted** and **correct**. Band on what was *right* — attempts alone say
+nothing, because twenty wrong answers in twenty seconds is not recall.
 
-| Attempted in 4 min | Reading |
+| Correct in 4 min | Reading |
 |---|---|
+| 18–20 | Recall is automatic. `M2a AUTO`. Move on. |
+| 13–17 | Knows them, computing rather than recalling. `M2a SECURE`. Daily drilling for 2–3 weeks. |
+| 8–12 | Not automatic. **`M2a PRAC` — this is now the first priority in the programme**, ahead of new content. |
+| Under 8 | Recall is not there yet. `M2a INTRO`. Weeks 1–2 go here and almost nowhere else. |
+
+Then read the gap between the two numbers:
+
+- **Attempted well ahead of correct** (five or more) — answering fast without
+  checking. That is a rushing habit, not a recall strength, and it needs a
+  checking routine *before* any speed work. Do not mistake it for fluency.
+- **Correct close to attempted, but few attempted** — accurate and slow. A (T)
+  pattern: the knowledge is there and the speed is not. This is the one that
+  costs marks on the day and it is fixed by automaticity, not reteaching.
+
+---|---|
 | 18–20, nearly all correct | Recall is automatic. `M2a AUTO`. Move on. |
 | 13–17, mostly correct | Knows them, computing rather than recalling. `M2a SECURE`. Daily drilling for 2–3 weeks. |
 | 8–12 | Not automatic. **`M2a PRAC` — this is now the first priority in the programme**, ahead of new content. |
