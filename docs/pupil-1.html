@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex"><style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style><title>Puzzle Set One</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#fdfcfa; --card:#fff; --sunk:#f3efe8;
+  --ink:#1c1a17; --muted:#6b6560; --rule:#ded8d0;
+  --accent:#8a5a2b; --soft:#f6efe5; --good:#2f6b46; --alarm:#a33a2c;
+  --ui:"IBM Plex Sans",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --serif:"Newsreader",Georgia,serif;
+}
+:root:not([data-theme="light"]){@media (prefers-color-scheme:dark){
+  --bg:#171613; --card:#1f1d19; --sunk:#242019;
+  --ink:#ece7df; --muted:#a49d93; --rule:#393430;
+  --accent:#d9a86a; --soft:#251f17; --good:#6fb98c; --alarm:#dc7a68;
+}}
+:root[data-theme="dark"]{
+  --bg:#171613; --card:#1f1d19; --sunk:#242019;
+  --ink:#ece7df; --muted:#a49d93; --rule:#393430;
+  --accent:#d9a86a; --soft:#251f17; --good:#6fb98c; --alarm:#dc7a68;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 var(--ui)}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px;padding-block:0 120px}
+
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);
+  border-bottom:1px solid var(--rule);padding-block:10px}
+.hrow{display:flex;align-items:center;gap:12px}
+.hrow h1{font:600 17px/1.2 var(--serif);margin:0;flex:1;min-width:0}
+.clock{font:600 20px/1 var(--mono);font-variant-numeric:tabular-nums;
+  background:var(--soft);color:var(--accent);padding:6px 10px;border-radius:7px}
+.clock.low{background:var(--alarm);color:#fff}
+.saved{font:400 12px/1 var(--mono);color:var(--muted);white-space:nowrap}
+.dots{display:flex;gap:5px;margin-top:9px}
+.dots i{height:4px;flex:1;background:var(--rule);border-radius:2px}
+.dots i.done{background:var(--good)}
+.dots i.now{background:var(--accent)}
+
+h2.ph{font:600 26px/1.2 var(--serif);margin:26px 0 2px;text-wrap:balance}
+p.sub{color:var(--muted);font-size:14px;margin:0 0 20px}
+.panel{background:var(--soft);border-left:4px solid var(--accent);padding:16px 18px;
+  border-radius:0 8px 8px 0;margin:18px 0}
+.panel p{margin:0 0 10px}.panel p:last-child{margin:0}
+.passage{background:var(--card);border:1px solid var(--rule);border-radius:8px;
+  padding:20px 22px;margin:0 0 24px}
+.passage h3{font:600 19px var(--serif);margin:0 0 2px}
+.passage .by{font:italic 400 13px var(--serif);color:var(--muted);margin:0 0 14px}
+.passage p{font:400 16px/1.7 var(--serif);margin:0 0 13px}
+.passage p:last-child{margin:0}
+
+.q{background:var(--card);border:1px solid var(--rule);border-radius:9px;
+  padding:15px 17px;margin-bottom:12px}
+.q.answered{border-color:var(--good)}
+.q .qn{font:600 12px var(--mono);color:var(--muted);letter-spacing:.06em}
+.q .qt{font-size:16.5px;margin:3px 0 11px}
+.q .qt i{font-style:italic;color:var(--muted)}
+input[type=text],textarea{width:100%;font:400 16px var(--ui);color:var(--ink);
+  background:var(--bg);border:1.5px solid var(--rule);border-radius:7px;padding:10px 12px}
+input.num{font:600 18px var(--mono);max-width:180px;text-align:center}
+textarea{min-height:76px;resize:vertical;line-height:1.55}
+input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.opts{display:flex;flex-direction:column;gap:7px}
+.opt{display:flex;align-items:center;gap:10px;border:1.5px solid var(--rule);border-radius:7px;
+  padding:10px 13px;cursor:pointer;background:var(--bg)}
+.opt:hover{border-color:var(--accent)}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt .kbd{font:600 13px var(--mono);width:26px;height:26px;display:grid;place-items:center;
+  border:1.5px solid var(--rule);border-radius:5px;flex:none}
+.opt:has(input:checked){border-color:var(--accent);background:var(--soft)}
+.opt:has(input:checked) .kbd{background:var(--accent);color:#fff;border-color:var(--accent)}
+.opt:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+:root[data-theme="dark"] .opt:has(input:checked) .kbd{color:#1a1510}
+
+.sprintgrid{display:grid;grid-template-columns:1fr;gap:9px}
+@media(min-width:520px){.sprintgrid{grid-template-columns:1fr 1fr}}
+.sq{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--rule);
+  border-radius:8px;padding:9px 12px}
+.sq.answered{border-color:var(--good)}
+.sq .n{font:400 12px var(--mono);color:var(--muted);min-width:20px}
+.sq .e{font:600 18px var(--mono);flex:1}
+.sq input{font:600 17px var(--mono);width:84px;text-align:center;padding:7px 6px;
+  border:1.5px solid var(--rule);border-radius:6px;background:var(--bg);color:var(--ink)}
+
+figure{margin:0 0 13px;background:var(--card);border:1px solid var(--rule);
+  border-radius:8px;padding:10px;overflow-x:auto}
+figure svg{max-width:100%;height:auto;display:block}
+.shape-fill{fill:var(--ink)}.shape-none{fill:none}
+.shape-line{stroke:var(--ink);stroke-width:2.5;fill:none}
+.shape-solid{stroke:var(--ink);stroke-width:2.5;fill:var(--ink)}
+.lbl{fill:var(--muted);font:600 13px var(--ui);text-anchor:middle}
+.lbl-fg{fill:var(--ink);font:600 15px var(--ui);text-anchor:middle}
+.dash{stroke:var(--accent);stroke-width:1.5;stroke-dasharray:5 4;fill:none}
+.qmark{fill:var(--accent);font:700 30px var(--serif);text-anchor:middle}
+.cell{stroke:var(--rule);stroke-width:1.5;fill:none}
+.net{stroke:var(--ink);stroke-width:2;fill:none}
+.f-top,.f-left,.f-right{stroke:var(--ink);stroke-width:2;stroke-linejoin:round}
+.f-top{fill:var(--sunk)}.f-left{fill:var(--rule)}.f-right{fill:var(--muted)}
+
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--bg);
+  border-top:1px solid var(--rule);padding:12px 16px;
+  padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+.navin{max-width:720px;margin:0 auto;display:flex;gap:10px;align-items:center}
+button.b{font:600 15px var(--ui);border-radius:8px;padding:11px 20px;cursor:pointer;
+  border:1.5px solid var(--rule);background:var(--card);color:var(--ink)}
+button.b.go{background:var(--accent);border-color:var(--accent);color:#fff;flex:1}
+:root[data-theme="dark"] button.b.go{color:#1a1510}
+button.b:disabled{opacity:.45;cursor:default}
+button.b:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.count{font:400 13px var(--mono);color:var(--muted);margin-left:auto}
+.code{font:400 12px/1.45 var(--mono);width:100%;min-height:110px;word-break:break-all;
+  background:var(--sunk);border:1px solid var(--rule);border-radius:7px;padding:11px;color:var(--ink)}
+.done-big{font:600 34px/1.2 var(--serif);margin:10px 0 6px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<style>
+button.again{font:500 12px var(--ui);background:none;border:0;color:var(--muted);
+  text-decoration:underline;cursor:pointer;padding:2px 4px;white-space:nowrap}
+button.again:hover{color:var(--alarm)}
+button.again[data-armed="1"]{color:var(--alarm);font-weight:600}
+button.again:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+
+<div class="wrap"><header class="top" id="hdr" hidden><div class="hrow"><h1 id="ptitle"></h1><span class="clock" id="clock" hidden>4:00</span><button class="again" id="again" hidden>Start again</button><span class="saved" id="saved"></span></div><div class="dots" id="dots"></div></header><main id="main"></main></div><div class="nav"><div class="navin" id="navin"></div></div>
+<script>
+const Q = [{"id":"A1","part":"A","n":"1","q":"7 × 8 =","t":"num"},{"id":"A2","part":"A","n":"2","q":"54 ÷ 6 =","t":"num"},{"id":"A3","part":"A","n":"3","q":"12 × 7 =","t":"num"},{"id":"A4","part":"A","n":"4","q":"9 × 6 =","t":"num"},{"id":"A5","part":"A","n":"5","q":"144 ÷ 12 =","t":"num"},{"id":"A6","part":"A","n":"6","q":"8 × 8 =","t":"num"},{"id":"A7","part":"A","n":"7","q":"63 ÷ 7 =","t":"num"},{"id":"A8","part":"A","n":"8","q":"11 × 12 =","t":"num"},{"id":"A9","part":"A","n":"9","q":"6 × 7 =","t":"num"},{"id":"A10","part":"A","n":"10","q":"81 ÷ 9 =","t":"num"},{"id":"A11","part":"A","n":"11","q":"400 + 250 =","t":"num"},{"id":"A12","part":"A","n":"12","q":"1000 − 375 =","t":"num"},{"id":"A13","part":"A","n":"13","q":"25 × 4 =","t":"num"},{"id":"A14","part":"A","n":"14","q":"Half of 96 =","t":"num"},{"id":"A15","part":"A","n":"15","q":"7 × 30 =","t":"num"},{"id":"A16","part":"A","n":"16","q":"96 ÷ 8 =","t":"num"},{"id":"A17","part":"A","n":"17","q":"Double 175 =","t":"num"},{"id":"A18","part":"A","n":"18","q":"15 × 6 =","t":"num"},{"id":"A19","part":"A","n":"19","q":"121 ÷ 11 =","t":"num"},{"id":"A20","part":"A","n":"20","q":"200 − 65 =","t":"num"},{"id":"B1","part":"B","n":"1","q":"Round <b>47,381</b> to the nearest thousand.","t":"num"},{"id":"B2","part":"B","n":"2","q":"At midnight the temperature was <b>−6 °C</b>. By noon it had risen by <b>11 degrees</b>. What was the temperature at noon?","t":"num"},{"id":"B3","part":"B","n":"3","q":"Work out <b>3,284 × 6</b>.","t":"num"},{"id":"B4","part":"B","n":"4","q":"Work out <b>5 + 3 × 4</b>.","t":"num"},{"id":"B5","part":"B","n":"5","q":"What is <b>two thirds of 42</b>?","t":"num"},{"id":"B6","part":"B","n":"6","q":"Work out <b>¾ + ⅛</b>. Give your answer as a fraction.","t":"num"},{"id":"B7","part":"B","n":"7","q":"Find <b>15% of 80</b>.","t":"num"},{"id":"B8","part":"B","n":"8","q":"Write <b>0.35</b> as a fraction in its simplest form.","t":"num"},{"id":"B9","part":"B","n":"9","q":"A train leaves at <b>14:37</b>. The journey takes <b>1 hour and 48 minutes</b>. At what time does it arrive?","t":"num"},{"id":"B10","part":"B","n":"10","q":"Two angles in a triangle are <b>47°</b> and <b>68°</b>. What is the third angle?","t":"num"},{"id":"B11","part":"B","n":"11","q":"Share <b>£45</b> between two people in the ratio <b>2 : 3</b>.","t":"text"},{"id":"B12","part":"B","n":"12","q":"Here is a sequence: <b>4, 7, 10, 13, …</b>&nbsp; What is the <b>next</b> term?","t":"num"},{"id":"B13","part":"B","n":"13","q":"Same sequence. What is the <b>20th</b> term?","t":"num"},{"id":"B14","part":"B","n":"14","q":"A shop sells pencils in packs of 8 for <b>£2.40</b> a pack, and rulers at <b>65p</b> each. Priya buys 3 packs of pencils and 4 rulers, and pays with a <b>£20</b> note. How much change does she get?","t":"num"},{"id":"C1","part":"C","n":"1","q":"How many years had Martha’s grandfather worked at the lighthouse?","t":"text"},{"id":"C2","part":"C","n":"2","q":"What is the rhythm of the lighthouse at Ardmore?","t":"text"},{"id":"C3","part":"C","n":"3","q":"In paragraph 2, the writer says her grandfather had “stopped needing to <b>decorate</b>” the fact. What does <b>decorate</b> mean here?","t":"long"},{"id":"C4","part":"C","n":"4","q":"Find and copy a word from the passage that means <b>something that is not there</b>.","t":"text"},{"id":"C5","part":"C","n":"5","q":"Martha thinks her grandfather’s tone “was not modesty at all but something closer to the opposite”. What does she mean by this?","t":"long"},{"id":"C6","part":"C","n":"6","q":"How do we know the visit takes place at night? Give <b>two</b> pieces of evidence from the passage.","t":"long"},{"id":"C7","part":"C","n":"7","q":"The writer describes the brass housing as “warm as an animal”. What is this kind of language called?","t":"text"},{"id":"C8","part":"C","n":"8","q":"Why do you think the writer chose it?","t":"long"},{"id":"C9","part":"C","n":"9","q":"In your own words, what has Martha understood by the end of the passage?","t":"long"},{"id":"C10","part":"C","n":"10","q":"In “standing <b>patiently</b> in the dark”, what word class is <b>patiently</b>?","t":"text"},{"id":"C11","part":"C","n":"11","q":"Copy out the <b>subordinate clause</b>:<br><i>Although the wind had dropped, the sea was still rough.</i>","t":"text"},{"id":"C12","part":"C","n":"12","q":"Rewrite with the correct punctuation and capital letters:<br><i>marthas grandfather said its four and a pause</i>","t":"long"},{"id":"C13","part":"C","n":"13","q":"Three of these four words are spelt incorrectly. Write each one correctly.<br><i>seperate · definately · occasion · recieve</i>","t":"text"},{"id":"C14","part":"C","n":"14","q":"Add the missing apostrophe:<br><i>The three keepers quarters were at the base of the tower.</i>","t":"text"},{"id":"D1","part":"D","n":"1","q":"Which word is closest in meaning to <b>ABUNDANT</b>?","t":"choice","o":["scarce","plentiful","heavy","distant"]},{"id":"D2","part":"D","n":"2","q":"Which is the <b>odd one out</b>?","t":"choice","o":["oak","pine","willow","tulip","birch"]},{"id":"D3","part":"D","n":"3","q":"What comes next?<br><b>AC &nbsp; EG &nbsp; IK &nbsp; MO &nbsp; ?</b>","t":"text"},{"id":"D4","part":"D","n":"4","q":"If <b>FLAME</b> is written in code as <b>GMBNF</b>, how is <b>TORCH</b> written in the same code?","t":"text"},{"id":"D5","part":"D","n":"5","q":"A five-letter word is hidden across the end of one word and the start of the next. Find it.<br><i>We must plan every detail.</i>","t":"text"},{"id":"D6","part":"D","n":"6","q":"<b>Bird</b> is to <b>nest</b> as <b>bee</b> is to …?","t":"text"},{"id":"D7","part":"D","n":"7","q":"Four children stand in a queue.<br>Tom is behind Sam. Ana is in front of Sam. Ben is last.<br>Who is <b>first</b>?","t":"text"},{"id":"D8","part":"D","n":"8","q":"If <b>A=1, B=2, C=3, D=4, E=5</b>, work out <b>(D × E) − (B × C)</b>.","t":"num"},{"id":"E1","part":"E","n":"1","q":"Which shape comes next in the series?","fig":"\n  <svg viewBox=\"0 0 640 130\" role=\"img\" aria-label=\"A series of four polygons followed by a question mark.\">\n    <polygon class=\"shape-line\" points=\"60,24 93,81 27,81\"/><polygon class=\"shape-solid\" points=\"217,35 217,89 163,89 163,35\"/><polygon class=\"shape-line\" points=\"320,24 356,50 342,93 298,93 284,50\"/><polygon class=\"shape-solid\" points=\"469,29 488,62 469,95 431,95 412,62 431,29\"/><text class=\"qmark\" x=\"580\" y=\"76\">?</text>\n  </svg>\n  <svg viewBox=\"0 0 700 125\" role=\"img\" aria-label=\"Four answer options, A to D.\">\n    <polygon class=\"shape-solid\" points=\"105,15 125,35 125,65 105,85 75,85 55,65 55,35 75,15\"/><text class=\"lbl\" x=\"90\" y=\"110\">A</text><polygon class=\"shape-line\" points=\"260,12 290,26 297,58 276,84 244,84 223,58 230,26\"/><text class=\"lbl\" x=\"260\" y=\"110\">B</text><polygon class=\"shape-solid\" points=\"449,17 468,50 449,83 411,83 392,50 411,17\"/><text class=\"lbl\" x=\"430\" y=\"110\">C</text><polygon class=\"shape-line\" points=\"615,15 635,35 635,65 615,85 585,85 565,65 565,35 585,15\"/><text class=\"lbl\" x=\"600\" y=\"110\">D</text>\n  </svg>\n  ","t":"choice","o":["A","B","C","D"]},{"id":"E2","part":"E","n":"2","q":"Which figure is the <b>odd one out</b>?","fig":"\n  <svg viewBox=\"0 0 700 130\" role=\"img\" aria-label=\"Five polygons, each containing a number of dots. Options A to E.\">\n    <polygon class=\"shape-line\" points=\"70,18 103,75 37,75\"/><circle class=\"shape-fill\" cx=\"70\" cy=\"41\" r=\"3.6\"/><circle class=\"shape-fill\" cx=\"85\" cy=\"66\" r=\"3.6\"/><circle class=\"shape-fill\" cx=\"55\" cy=\"66\" r=\"3.6\"/><text class=\"lbl\" x=\"70\" y=\"116\">A</text><polygon class=\"shape-line\" points=\"237,29 237,83 183,83 183,29\"/><circle class=\"shape-fill\" cx=\"222\" cy=\"46\" r=\"3.6\"/><circle class=\"shape-fill\" cx=\"222\" cy=\"70\" r=\"3.6\"/><circle class=\"shape-fill\" cx=\"198\" cy=\"70\" r=\"3.6\"/><circle class=\"shape-fill\" cx=\"198\" cy=\"46\" r=\"3.6\"/><text class=\"lbl\" x=\"210\" y=\"116\">B</text><polygon class=\"shape-line\" points=\"350,18 386,44 372,87 328,87 314,44\"/><circle class=\"shape-fill\" cx=\"350\" cy=\"41\" r=\"3.6\"/><circle class=\"shape-fill\" cx=\"366\" cy=\"53\" r=\"3.6\"/><circle class=\"shape-fill\" cx=\"360\" cy=\"72\" r=\"3.6\"/><circle class=\"shape-fill\" cx=\"340\" cy=\"72\" r=\"3.6\"/><circle class=\"shape-fill\" cx=\"334\" cy=\"53\" r=\"3.6\"/><text class=\"lbl\" x=\"350\" y=\"116\">C</text><polygon class=\"shape-line\" points=\"509,23 528,56 509,89 471,89 452,56 471,23\"/><circle class=\"shape-fill\" cx=\"498\" cy=\"43\" r=\"3.6\"/><circle class=\"shape-fill\" cx=\"507\" cy=\"58\" r=\"3.6\"/><circle class=\"shape-fill\" cx=\"498\" cy=\"73\" r=\"3.6\"/><circle class=\"shape-fill\" cx=\"482\" cy=\"73\" r=\"3.6\"/><circle class=\"shape-fill\" cx=\"473\" cy=\"58\" r=\"3.6\"/><circle class=\"shape-fill\" cx=\"482\" cy=\"43\" r=\"3.6\"/><text class=\"lbl\" x=\"490\" y=\"116\">D</text><polygon class=\"shape-line\" points=\"630,18 660,32 667,64 646,90 614,90 593,64 600,32\"/><circle class=\"shape-fill\" cx=\"630\" cy=\"41\" r=\"3.6\"/><circle class=\"shape-fill\" cx=\"646\" cy=\"53\" r=\"3.6\"/><circle class=\"shape-fill\" cx=\"640\" cy=\"72\" r=\"3.6\"/><circle class=\"shape-fill\" cx=\"620\" cy=\"72\" r=\"3.6\"/><circle class=\"shape-fill\" cx=\"614\" cy=\"53\" r=\"3.6\"/><text class=\"lbl\" x=\"630\" y=\"116\">E</text>\n  </svg>\n  ","t":"choice","o":["A","B","C","D","E"]},{"id":"E3","part":"E","n":"3","q":"The first two figures go together in a certain way. Which option completes the second pair in the same way?","fig":"\n  <svg viewBox=\"0 0 640 120\" role=\"img\" aria-label=\"Large square with small circle is to small square with large circle, as large triangle with small circle is to question mark.\">\n    <rect class=\"shape-line\" x=\"22\" y=\"18\" width=\"76\" height=\"76\"/>\n    <circle class=\"shape-fill\" cx=\"60\" cy=\"56\" r=\"9\"/>\n    <text class=\"lbl-fg\" x=\"128\" y=\"62\">is to</text>\n    <rect class=\"shape-line\" x=\"170\" y=\"38\" width=\"42\" height=\"42\"/>\n    <circle class=\"shape-fill\" cx=\"191\" cy=\"59\" r=\"16\"/>\n    <text class=\"lbl-fg\" x=\"252\" y=\"62\">as</text>\n    <polygon class=\"shape-line\" points=\"330,12 368,78 292,78\"/>\n    <circle class=\"shape-fill\" cx=\"330\" cy=\"56\" r=\"9\"/>\n    <text class=\"lbl-fg\" x=\"420\" y=\"62\">is to</text>\n    <text class=\"qmark\" x=\"480\" y=\"72\">?</text>\n  </svg>\n  <svg viewBox=\"0 0 700 125\" role=\"img\" aria-label=\"Four answer options, A to D.\">\n    <polygon class=\"shape-line\" points=\"90,8 128,74 52,74\"/>\n    <circle class=\"shape-fill\" cx=\"90\" cy=\"52\" r=\"9\"/>\n    <text class=\"lbl\" x=\"90\" y=\"112\">A</text>\n    <polygon class=\"shape-line\" points=\"260,24 284,66 236,66\"/>\n    <circle class=\"shape-fill\" cx=\"260\" cy=\"52\" r=\"13\"/>\n    <text class=\"lbl\" x=\"260\" y=\"112\">B</text>\n    <polygon class=\"shape-line\" points=\"430,8 468,74 392,74\"/>\n    <circle class=\"shape-fill\" cx=\"430\" cy=\"52\" r=\"21\"/>\n    <text class=\"lbl\" x=\"430\" y=\"112\">C</text>\n    <polygon class=\"shape-line\" points=\"600,24 624,66 576,66\"/>\n    <circle class=\"shape-fill\" cx=\"600\" cy=\"52\" r=\"7\"/>\n    <text class=\"lbl\" x=\"600\" y=\"112\">D</text>\n  </svg>\n  ","t":"choice","o":["A","B","C","D"]},{"id":"E4","part":"E","n":"4","q":"Which figure completes the grid?","fig":"\n  <svg viewBox=\"0 0 700 250\" role=\"img\" aria-label=\"A three by three grid of shapes with the bottom right cell missing, and four options A to D.\">\n    <rect class=\"cell\" x=\"20\" y=\"14\" width=\"64\" height=\"64\"/>\n    <circle class=\"shape-line\" cx=\"52\" cy=\"46\" r=\"20\"/>\n    <rect class=\"cell\" x=\"92\" y=\"14\" width=\"64\" height=\"64\"/>\n    <circle class=\"shape-line\" cx=\"124\" cy=\"46\" r=\"20\"/>\n    <path class=\"shape-fill\" d=\"M124 26 a20 20 0 0 1 0 40 z\"/>\n    <rect class=\"cell\" x=\"164\" y=\"14\" width=\"64\" height=\"64\"/>\n    <circle class=\"shape-solid\" cx=\"196\" cy=\"46\" r=\"20\"/>\n\n    <rect class=\"cell\" x=\"20\" y=\"86\" width=\"64\" height=\"64\"/>\n    <rect class=\"shape-line\" x=\"34\" y=\"100\" width=\"36\" height=\"36\"/>\n    <rect class=\"cell\" x=\"92\" y=\"86\" width=\"64\" height=\"64\"/>\n    <rect class=\"shape-line\" x=\"106\" y=\"100\" width=\"36\" height=\"36\"/>\n    <rect class=\"shape-fill\" x=\"124\" y=\"100\" width=\"18\" height=\"36\"/>\n    <rect class=\"cell\" x=\"164\" y=\"86\" width=\"64\" height=\"64\"/>\n    <rect class=\"shape-solid\" x=\"178\" y=\"100\" width=\"36\" height=\"36\"/>\n\n    <rect class=\"cell\" x=\"20\" y=\"158\" width=\"64\" height=\"64\"/>\n    <polygon class=\"shape-line\" points=\"52,172 72,208 32,208\"/>\n    <rect class=\"cell\" x=\"92\" y=\"158\" width=\"64\" height=\"64\"/>\n    <polygon class=\"shape-line\" points=\"124,172 144,208 104,208\"/>\n    <polygon class=\"shape-fill\" points=\"124,172 144,208 124,208\"/>\n    <rect class=\"cell\" x=\"164\" y=\"158\" width=\"64\" height=\"64\"/>\n    <text class=\"qmark\" x=\"196\" y=\"203\">?</text>\n\n    <line class=\"dash\" x1=\"270\" y1=\"20\" x2=\"270\" y2=\"220\"/>\n\n    <polygon class=\"shape-solid\" points=\"344,92 364,128 324,128\"/>\n    <text class=\"lbl\" x=\"344\" y=\"152\">A</text>\n    <polygon class=\"shape-line\" points=\"454,92 474,128 434,128\"/>\n    <text class=\"lbl\" x=\"454\" y=\"152\">B</text>\n    <polygon class=\"shape-line\" points=\"564,92 584,128 544,128\"/>\n    <polygon class=\"shape-fill\" points=\"564,92 584,128 564,128\"/>\n    <text class=\"lbl\" x=\"564\" y=\"152\">C</text>\n    <rect class=\"shape-solid\" x=\"628\" y=\"94\" width=\"34\" height=\"34\"/>\n    <text class=\"lbl\" x=\"645\" y=\"152\">D</text>\n  </svg>\n  ","t":"choice","o":["A","B","C","D"]},{"id":"E5","part":"E","n":"5","q":"Which option is the <b>mirror image</b> of the figure on the left, reflected in the dotted line?","fig":"\n  <svg viewBox=\"0 0 700 150\" role=\"img\" aria-label=\"An L-shaped figure beside a vertical dotted mirror line, with four options A to D.\">\n    <polygon class=\"shape-line\" points=\"30,20 30,100 90,100 90,78 52,78 52,20\"/>\n    <line class=\"dash\" x1=\"128\" y1=\"8\" x2=\"128\" y2=\"118\"/>\n    <polygon class=\"shape-line\" points=\"226,20 226,100 166,100 166,78 204,78 204,20\"/>\n    <text class=\"lbl\" x=\"196\" y=\"132\">A</text>\n    <polygon class=\"shape-line\" points=\"320,20 320,100 380,100 380,78 342,78 342,20\"/>\n    <text class=\"lbl\" x=\"350\" y=\"132\">B</text>\n    <polygon class=\"shape-line\" points=\"470,100 470,20 530,20 530,42 492,42 492,100\"/>\n    <text class=\"lbl\" x=\"500\" y=\"132\">C</text>\n    <polygon class=\"shape-line\" points=\"640,100 640,20 580,20 580,42 618,42 618,100\"/>\n    <text class=\"lbl\" x=\"610\" y=\"132\">D</text>\n  </svg>\n  ","t":"choice","o":["A","B","C","D"]},{"id":"E6","part":"E","n":"6","q":"This is the <b>net of a cube</b>. When it is folded up, which letter is on the face <b>opposite C</b>?","fig":"\n  <svg viewBox=\"0 0 400 220\" role=\"img\" aria-label=\"Cube net: a horizontal row of four squares labelled B, C, D, E, with square A above C and square F below C.\">\n    <rect class=\"net\" x=\"110\" y=\"16\" width=\"60\" height=\"60\"/><text class=\"lbl-fg\" x=\"140\" y=\"54\">A</text>\n    <rect class=\"net\" x=\"50\" y=\"76\" width=\"60\" height=\"60\"/><text class=\"lbl-fg\" x=\"80\" y=\"114\">B</text>\n    <rect class=\"net\" x=\"110\" y=\"76\" width=\"60\" height=\"60\"/><text class=\"lbl-fg\" x=\"140\" y=\"114\">C</text>\n    <rect class=\"net\" x=\"170\" y=\"76\" width=\"60\" height=\"60\"/><text class=\"lbl-fg\" x=\"200\" y=\"114\">D</text>\n    <rect class=\"net\" x=\"230\" y=\"76\" width=\"60\" height=\"60\"/><text class=\"lbl-fg\" x=\"260\" y=\"114\">E</text>\n    <rect class=\"net\" x=\"110\" y=\"136\" width=\"60\" height=\"60\"/><text class=\"lbl-fg\" x=\"140\" y=\"174\">F</text>\n  </svg>\n  ","t":"choice","o":["A","B","D","E","F"]},{"id":"E7","part":"E","n":"7","q":"This solid is built from small cubes, all the same size. <b>How many cubes</b> were used altogether?<br><i>No cube is floating — every cube rests on the ground or on another cube.</i>","fig":"\n  <svg viewBox=\"0 0 320 185\" role=\"img\" aria-label=\"A solid built from small cubes, drawn in three dimensions.\">\n    <polygon class=\"f-left\" points=\"133,37 160,52 160,82 133,67\"/><polygon class=\"f-right\" points=\"187,37 160,52 160,82 187,67\"/><polygon class=\"f-top\" points=\"160,22 187,37 160,52 133,37\"/><polygon class=\"f-left\" points=\"160,82 187,97 187,127 160,112\"/><polygon class=\"f-right\" points=\"214,82 187,97 187,127 214,112\"/><polygon class=\"f-top\" points=\"187,67 214,82 187,97 160,82\"/><polygon class=\"f-left\" points=\"106,82 133,97 133,127 106,112\"/><polygon class=\"f-right\" points=\"160,82 133,97 133,127 160,112\"/><polygon class=\"f-top\" points=\"133,67 160,82 133,97 106,82\"/><polygon class=\"f-left\" points=\"133,97 160,112 160,142 133,127\"/><polygon class=\"f-right\" points=\"187,97 160,112 160,142 187,127\"/><polygon class=\"f-top\" points=\"160,82 187,97 160,112 133,97\"/>\n  </svg>\n  ","t":"num"}];
+const PASSAGE = "\n  <h3>The Lamp Room</h3>\n  <p class=\"by\">from a short story</p>\n  <p>Nobody had told Martha the lamp would be so loud. She had imagined a\n  lighthouse as a silent thing &mdash; a finger of white standing patiently in\n  the dark &mdash; but the mechanism above her head clicked and sighed and turned\n  like something breathing, and the whole tower seemed to lean into each gust off\n  the water.</p>\n  <p>Her grandfather moved around the lamp room without hurrying. Forty-one\n  years, he had said at supper, and not one night dark. He said it the way other\n  people mention the weather, which Martha had begun to understand was not\n  modesty at all but something closer to the opposite: a fact so large he had\n  stopped needing to decorate it.</p>\n  <p>&ldquo;Put your hand here,&rdquo; he said.</p>\n  <p>She pressed her palm to the brass housing. It was warm &mdash; warmer than\n  she expected, warm as an animal &mdash; and beneath the warmth she could feel\n  the turning, steady and unhurried. Three seconds, and then three seconds, and\n  then three seconds again.</p>\n  <p>&ldquo;Every lighthouse has its own rhythm,&rdquo; he said. &ldquo;Ours is\n  three. Down the coast at Ardmore, it&rsquo;s four and a pause. A captain out\n  there in the black can&rsquo;t see the rock, can&rsquo;t see the shore,\n  can&rsquo;t see us. But he counts. And if he counts to three, he knows exactly\n  where he is in the world.&rdquo;</p>\n  <p>Martha looked out at the water, which was not really water at this hour so\n  much as an absence &mdash; a great moving nothing pressed up against the glass.\n  Somewhere in it, she supposed, someone was counting.</p>\n  <p>She thought about that for a long time afterwards. Long after the tower was\n  automated, long after her grandfather had gone down the stairs for the last\n  time. It seemed to her a rare thing, to be so precisely and reliably yourself\n  that a stranger could find their way home by it.</p>\n";
+const PARTS=[
+ {k:"A",name:"Number Sprint",sub:"20 quick questions · 4 minutes on the clock",timed:true},
+ {k:"B",name:"Maths",sub:"14 questions · take your time"},
+ {k:"C",name:"Reading",sub:"Read the story twice, then answer"},
+ {k:"D",name:"Words & Logic",sub:"8 puzzles"},
+ {k:"E",name:"Shapes & Patterns",sub:"7 puzzles"}];
+const FIXED = "p1";   // a file sent to one family is locked to that pupil
+const KEY="puzzleset1";
+const keyFor = p => KEY+"-"+(p||"p1");
+const LETTERS=["a","b","c","d","e"];
+let S=null, screen=0, active=null, activeAt=0, partAt=0, tick=null, dl=null;
+
+/* ---------------- state ---------------- */
+const fresh = () => ({p:"", a:{}, pt:{}, started:null, aStart:null, finished:null});
+function readFor(p){ try{ const r=localStorage.getItem(keyFor(p));
+    return r? Object.assign(fresh(),JSON.parse(r)) : null; }catch(e){ return null; } }
+// Resume the most recently touched unfinished paper on this device, whichever
+// pupil it belongs to; three children sharing one browser keep separate papers.
+function load(){
+  let best=null;
+  (FIXED?[FIXED]:["p1","p2","p3"]).forEach(p=>{ const x=readFor(p);
+    if(x && x.started && !x.finished){
+      if(!best || (x.updated||"") > (best.updated||"")) best=x; } });
+  if(best){ S=best; return true; }
+  S=fresh(); return false; }
+function wipe(){ try{ localStorage.removeItem(keyFor(S.p)); }catch(e){}
+  const keep=S.p; S=fresh(); S.p=keep; screen=0; if(tick) clearInterval(tick);
+  render(); }
+function save(){ S.updated=new Date().toISOString();
+  try{ localStorage.setItem(keyFor(S.p),JSON.stringify(S));
+    const el=document.getElementById("saved"); if(el) el.textContent="saved"; }catch(e){
+    const el=document.getElementById("saved"); if(el) el.textContent="not saving"; } }
+function setAns(id,val){ const cur=S.a[id]||{g:"",t:0}; cur.g=val; S.a[id]=cur; save(); }
+function flush(){ if(active&&activeAt){ const cur=S.a[active]||{g:"",t:0};
+    cur.t=(cur.t||0)+(Date.now()-activeAt)/1000; S.a[active]=cur; } active=null; activeAt=0; }
+function focusQ(id){ if(active===id) return; flush(); active=id; activeAt=Date.now(); }
+const answered = id => { const a=S.a[id]; return a && String(a.g).trim()!==""; };
+const partDone = k => Q.filter(q=>q.part===k).filter(q=>answered(q.id)).length;
+const aLeft = () => S.aStart ? Math.max(0, 240-(Date.now()-S.aStart)/1000) : 240;
+const aOver = () => S.aStart!==null && aLeft()<=0;
+
+/* ---------------- shell ---------------- */
+function render(){
+  flush();
+  const host=document.getElementById("main");
+  document.getElementById("hdr").hidden = (screen===0);
+  if(screen===0) host.innerHTML=intro();
+  else if(screen>=1 && screen<=5) host.innerHTML=part(PARTS[screen-1]);
+  else host.innerHTML=finish();
+  wire(); renderHdr(); renderNav();
+  if(S.started){ S.screen=screen; save(); }
+  window.scrollTo(0,0); partAt=Date.now();
+}
+function renderHdr(){
+  const p=PARTS[screen-1];
+  const ag=document.getElementById("again");
+  if(ag){ ag.hidden = !(screen>=1&&screen<=6); ag.dataset.armed="0";
+    ag.textContent="Start again"; }
+  document.getElementById("ptitle").textContent = p? "Part "+p.k+" · "+p.name : "";
+  const c=document.getElementById("clock");
+  c.hidden = !(p&&p.timed);
+  const d=document.getElementById("dots"); d.innerHTML="";
+  PARTS.forEach((x,i)=>{ const b=document.createElement("i");
+    if(i+1<screen) b.className="done"; else if(i+1===screen) b.className="now";
+    d.appendChild(b); });
+}
+function renderNav(){
+  const n=document.getElementById("navin");
+  if(screen===0){ n.innerHTML='<button class="b go" id="begin">Start</button>'; }
+  else if(screen===6){ n.innerHTML='<button class="b" id="back">Back</button>'; }
+  else { const p=PARTS[screen-1], done=partDone(p.k), tot=Q.filter(q=>q.part===p.k).length;
+    n.innerHTML=(screen>1&&!(screen===2&&!aOver())?'<button class="b" id="back">Back</button>':'')+
+      '<button class="b go" id="next">'+(screen===5?"Finish":"Next part")+'</button>'+
+      '<span class="count">'+done+' / '+tot+'</span>'; }
+  const b=document.getElementById("begin"), bk=document.getElementById("back"),
+        nx=document.getElementById("next");
+  if(b) b.onclick=()=>{ const sel=document.querySelector('input[name="pupil"]:checked');
+    const who = FIXED || (sel? sel.value : "p1");
+    const saved = readFor(who);
+    if(saved && saved.started && !saved.finished) S=saved; else { S=fresh(); S.p=who; }
+    S.p=who; S.started=S.started||new Date().toISOString();
+    save(); screen=1; S.aStart=S.aStart||Date.now(); save(); render(); startTick(); };
+  if(bk) bk.onclick=()=>{ logPart(); screen--; render(); };
+  const ag=document.getElementById("again");
+  if(ag) ag.onclick=()=>{
+    if(ag.dataset.armed!=="1"){ ag.dataset.armed="1";
+      ag.textContent="Erase and start again?"; 
+      setTimeout(()=>{ if(ag.dataset.armed==="1"){ ag.dataset.armed="0";
+        ag.textContent="Start again"; } },5000); return; }
+    wipe(); };
+  if(nx) nx.onclick=()=>{ logPart(); screen++;
+    if(screen===6){ S.finished=new Date().toISOString(); save(); }
+    render(); };
+}
+function logPart(){ const p=PARTS[screen-1]; if(!p||!partAt) return;
+  S.pt[p.k]=(S.pt[p.k]||0)+(Date.now()-partAt)/1000; save(); }
+function startTick(){ if(tick) clearInterval(tick);
+  tick=setInterval(()=>{ const c=document.getElementById("clock");
+    if(screen!==1){ return; }
+    const l=aLeft(); c.textContent=Math.floor(l/60)+":"+String(Math.floor(l%60)).padStart(2,"0");
+    c.classList.toggle("low", l<=30);
+    if(l<=0){ lockA(); }
+  },250); }
+function lockA(){ document.querySelectorAll('#main input').forEach(i=>i.disabled=true);
+  const w=document.getElementById("awarn");
+  if(w) w.innerHTML="<b>Time’s up.</b> That’s exactly what this part is for — stopping on time is the point, not finishing. Press <b>Next part</b>."; }
+
+/* ---------------- screens ---------------- */
+function intro(){
+  return '<h2 class="ph">Puzzle Set One</h2>'+
+  '<p class="sub">A mixed set of puzzles · about 50 minutes · Year 5</p>'+
+  '<div class="panel"><p><b>This is not a test and there is no pass mark.</b> It finds out what you already know, so that everything afterwards is pitched at the right level for you.</p>'+
+  '<p>Some will be easy. Some cover things you have not been taught yet — that is deliberate, and leaving one blank tells us something useful.</p>'+
+  '<p><b>Your answers save as you go</b>, so you can stop and come back — except Part A, which is four minutes on a clock and has to be done in one go. Do that part when you will not be interrupted.</p></div>'+
+  (FIXED
+    ? '<div class="q"><div class="qt">This paper is for <b>Pupil '+FIXED.slice(1)+'</b>.</div></div>'
+    : '<div class="q"><div class="qt">Who is this?</div><div class="opts">'+
+      ["p1","p2","p3"].map((p,i)=>'<label class="opt"><input type="radio" name="pupil" value="'+p+
+        '"'+(S.p===p||(!S.p&&i===0)?" checked":"")+'><span class="kbd">'+(i+1)+
+        '</span><span>Pupil '+(i+1)+'</span></label>').join("")+
+      '</div></div>');
+}
+function part(p){
+  let h='<h2 class="ph">'+(p.timed?"":"Part "+p.k+" · ")+p.name+'</h2><p class="sub">'+p.sub+'</p>';
+  if(p.k==="A"){ h+='<div class="panel" id="awarn"><b>Four minutes.</b> Answer as many as you can, in order. Do not work them out on paper — if you do not know one straight away, skip it.</div>';
+    h+='<div class="sprintgrid">';
+    Q.filter(q=>q.part==="A").forEach(q=>{ const a=S.a[q.id]||{};
+      h+='<div class="sq'+(answered(q.id)?" answered":"")+'" data-row="'+q.id+'">'+
+        '<span class="n">'+q.n+'</span><span class="e">'+q.q+'</span>'+
+        '<input id="i-'+q.id+'" data-q="'+q.id+'" inputmode="numeric" autocomplete="off" '+
+        'aria-label="Answer for question '+q.n+'" value="'+esc(a.g||"")+'"></div>'; });
+    h+='</div>'; return h; }
+  if(p.k==="C") h+='<div class="passage">'+PASSAGE+'</div>';
+  Q.filter(q=>q.part===p.k).forEach(q=>{ h+=qcard(q); });
+  return h;
+}
+function qcard(q){
+  const a=S.a[q.id]||{};
+  let h='<div class="q'+(answered(q.id)?" answered":"")+'" data-row="'+q.id+'">'+
+    '<div class="qn">'+q.part+q.n+'</div><div class="qt">'+q.q+'</div>';
+  if(q.fig) h+='<figure>'+q.fig+'</figure>';
+  if(q.t==="choice"){
+    h+='<div class="opts">'+q.o.map((o,i)=>{
+      const v = q.part==="E" ? o : LETTERS[i];
+      const lab = q.part==="E" ? o : LETTERS[i]+') '+o;
+      return '<label class="opt"><input type="radio" name="'+q.id+'" data-q="'+q.id+
+        '" value="'+v+'"'+(String(a.g)===v?" checked":"")+'><span class="kbd">'+
+        (q.part==="E"?o:LETTERS[i])+'</span><span>'+(q.part==="E"?"Option "+o:o)+'</span></label>';
+    }).join("")+'</div>';
+  } else if(q.t==="long"){
+    h+='<textarea id="i-'+q.id+'" data-q="'+q.id+'" aria-label="Answer for question '+q.n+
+      '">'+esc(a.g||"")+'</textarea>';
+  } else {
+    h+='<input type="text" class="'+(q.t==="num"?"num":"")+'" id="i-'+q.id+'" data-q="'+q.id+
+      '" autocomplete="off" aria-label="Answer for question '+q.n+'" value="'+esc(a.g||"")+'">';
+  }
+  return h+'</div>';
+}
+function finish(){
+  const done=Q.filter(q=>answered(q.id)).length;
+  return '<div class="done-big">All done.</div>'+
+  '<p class="sub">You answered '+done+' of '+Q.length+' questions. Nicely stuck at.</p>'+
+  '<div class="panel"><p><b>For the grown-up:</b> press <b>Download</b> and send the file to the tutor, or press <b>Copy</b> and paste the code into a message. Either one carries every answer and how long each part took.</p>'+
+  '<p>If any working was done on paper, photograph it and send that too.</p></div>'+
+  '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">'+
+  '<button class="b go" id="dlb" style="flex:0 0 auto">Download for the tutor</button>'+
+  '<button class="b" id="cpb">Copy code instead</button></div>'+
+  '<textarea class="code" id="payload" readonly aria-label="Transfer code">'+payload()+'</textarea>';
+}
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+
+/* ---------------- payload ---------------- */
+function payload(){
+  const a={}; Object.entries(S.a).forEach(([k,v])=>{
+    if(String(v.g).trim()!=="") a[k]=[v.g, Math.round((v.t||0)*10)/10]; });
+  const o={v:1,p:S.p||"p1",s:S.started,f:S.finished,
+    pt:Object.fromEntries(Object.entries(S.pt).map(([k,v])=>[k,Math.round(v)])),a:a};
+  const json=JSON.stringify(o);
+  try{ return btoa(String.fromCharCode(...new TextEncoder().encode(json))); }
+  catch(e){ return json; }
+}
+
+/* ---------------- wiring ---------------- */
+function wire(){
+  document.querySelectorAll("[data-q]").forEach(el=>{
+    const id=el.dataset.q;
+    if(el.type==="radio"){
+      el.onchange=()=>{ focusQ(id); setAns(id,el.value); mark(id); };
+    } else {
+      el.onfocus=()=>focusQ(id);
+      el.oninput=()=>{ setAns(id,el.value); mark(id); };
+      el.onblur=()=>flush();
+    }
+  });
+  if(screen===1 && aOver()) lockA();
+  const d=document.getElementById("dlb"), c=document.getElementById("cpb");
+  if(d) d.onclick=async()=>{
+    const name="puzzle-set-one-"+(S.p||"p1")+".txt";
+    if(dl){ try{ await dl.save({filename:name, data:payload()});
+        d.textContent="Sent to your downloads"; return; }
+      catch(e){ d.textContent="Not saved — use Copy"; return; } }
+    // no Claude runtime (a plain web page or a local file): the browser's own download
+    try{ const a=document.createElement("a");
+      a.href=URL.createObjectURL(new Blob([payload()],{type:"text/plain"}));
+      a.download=name; document.body.appendChild(a); a.click(); a.remove();
+      d.textContent="Sent to your downloads"; }
+    catch(e){ d.textContent="Use Copy instead"; }
+  };
+  if(c) c.onclick=()=>{ const t=document.getElementById("payload");
+    t.select(); t.setSelectionRange(0,999999);
+    let ok=false; try{ ok=document.execCommand("copy"); }catch(e){}
+    if(!ok && navigator.clipboard){ navigator.clipboard.writeText(t.value).then(()=>{
+      c.textContent="Copied"; },()=>{ c.textContent="Select it and copy"; }); return; }
+    c.textContent= ok? "Copied" : "Select it and copy"; };
+}
+function mark(id){ const row=document.querySelector('[data-row="'+id+'"]');
+  if(row) row.classList.toggle("answered", answered(id)); 
+  if(screen>=1&&screen<=5) renderNav(); }
+
+/* ---------------- boot ---------------- */
+(async function(){
+  const had=load();
+  if(had && S.finished){ screen=6; }
+  else if(had && S.started){
+    screen = (S.screen>=1 && S.screen<=6) ? S.screen : 1;
+    // the sprint is one sitting only — if its four minutes are gone, move past it
+    if(screen===1 && aOver()) screen=2;
+  }
+  render(); if(screen===1) startTick();
+  window.addEventListener("beforeunload",()=>{ flush(); logPart(); });
+  try{ dl = await claude.use("downloads"); }catch(e){ dl=null; }
+})();
+</script>
+</head></html>
