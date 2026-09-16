@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Puzzle Set One</title>
+<style>
+:root{
+  --bg:#fdfcfa; --fg:#1c1a17; --muted:#6b6560; --rule:#ddd7cf;
+  --accent:#8a5a2b; --accent-soft:#f5efe6; --box:#fff; --shadow:rgba(0,0,0,.05);
+  --face-top:#f2e9dc; --face-left:#d9cab5; --face-right:#bfae94;
+  --face-top:#f2e9dc; --face-left:#d9cab5; --face-right:#bfae94;
+}
+:root:not([data-theme="light"]){
+  @media (prefers-color-scheme: dark){
+    --bg:#171614; --fg:#eae6e0; --muted:#a09a92; --rule:#38352f;
+    --accent:#d9a86a; --accent-soft:#241f18; --box:#1f1d1a; --shadow:rgba(0,0,0,.3);
+    --face-top:#4b4237; --face-left:#38312a; --face-right:#2a251f;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#171614; --fg:#eae6e0; --muted:#a09a92; --rule:#38352f;
+  --accent:#d9a86a; --accent-soft:#241f18; --box:#1f1d1a; --shadow:rgba(0,0,0,.3);
+  --face-top:#4b4237; --face-left:#38312a; --face-right:#2a251f;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--fg);
+  font:16px/1.65 Georgia,"Iowan Old Style",serif;
+  padding:0 16px;
+}
+.wrap{max-width:780px;margin:0 auto;padding:40px 0 80px}
+header{border-bottom:3px solid var(--accent);padding-bottom:20px;margin-bottom:8px}
+h1{font-size:2rem;margin:0 0 6px;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:.95rem;margin:0}
+.namebar{display:flex;gap:24px;flex-wrap:wrap;margin:22px 0 0;font-size:.95rem}
+.namebar span{flex:1 1 180px;border-bottom:1px solid var(--rule);padding-bottom:4px}
+.intro{background:var(--accent-soft);border-left:4px solid var(--accent);
+  padding:16px 20px;margin:28px 0;font-size:.95rem}
+.intro p{margin:0 0 10px}.intro p:last-child{margin:0}
+h2{font-size:1.3rem;margin:44px 0 4px;padding-top:18px;border-top:1px solid var(--rule)}
+h2 .tag{display:block;font-size:.8rem;color:var(--muted);font-weight:normal;
+  letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px;font-family:system-ui,sans-serif}
+.timing{font-family:system-ui,sans-serif;font-size:.85rem;color:var(--accent);
+  font-weight:600;margin:0 0 18px}
+ol{padding-left:28px}
+ol li{margin-bottom:16px}
+.sprint{display:grid;grid-template-columns:repeat(2,1fr);gap:10px 22px;
+  list-style:none;padding:0;counter-reset:s}
+.sprint li{counter-increment:s;margin:0;display:flex;align-items:baseline;gap:8px;
+  font-family:system-ui,sans-serif;font-size:1.02rem}
+.sprint li::before{content:counter(s) ".";color:var(--muted);font-size:.85rem;
+  min-width:24px;text-align:right}
+.sprint .q{flex:1}
+.sprint .ans{display:inline-block;min-width:62px;border-bottom:1px solid var(--rule)}
+@media(min-width:620px){.sprint{grid-template-columns:repeat(4,1fr)}}
+.passage{background:var(--box);border:1px solid var(--rule);border-radius:4px;
+  padding:22px 26px;margin:18px 0 28px;box-shadow:0 1px 3px var(--shadow)}
+.passage h3{margin:0 0 4px;font-size:1.15rem}
+.passage .by{color:var(--muted);font-size:.85rem;margin:0 0 16px;font-style:italic}
+.passage p{margin:0 0 14px}
+.passage p:last-child{margin:0}
+.lines{display:block;margin-top:8px}
+.lines i{display:block;border-bottom:1px solid var(--rule);height:1.9em}
+.opts{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-wrap:wrap;gap:8px 20px;
+  font-family:system-ui,sans-serif;font-size:.95rem}
+.opts li{margin:0}
+figure{margin:14px 0 0;padding:0}
+svg{max-width:100%;height:auto;display:block}
+.nvr-fig{background:var(--box);border:1px solid var(--rule);border-radius:4px;padding:12px}
+.shape-fill{fill:var(--fg)}
+.shape-none{fill:none}
+.shape-line{stroke:var(--fg);stroke-width:2.5;fill:none}
+.shape-solid{stroke:var(--fg);stroke-width:2.5;fill:var(--fg)}
+.lbl{fill:var(--muted);font:600 13px system-ui,sans-serif;text-anchor:middle}
+.lbl-fg{fill:var(--fg);font:600 15px system-ui,sans-serif;text-anchor:middle}
+.dash{stroke:var(--accent);stroke-width:1.5;stroke-dasharray:5 4;fill:none}
+.qmark{fill:var(--accent);font:700 30px Georgia,serif;text-anchor:middle}
+.cell{stroke:var(--rule);stroke-width:1.5;fill:none}
+.f-top,.f-left,.f-right{stroke:var(--fg);stroke-width:2;stroke-linejoin:round}
+.f-top{fill:var(--face-top)}.f-left{fill:var(--face-left)}.f-right{fill:var(--face-right)}
+.net{stroke:var(--fg);stroke-width:2;fill:none}
+.f-top,.f-left,.f-right{stroke:var(--fg);stroke-width:2;stroke-linejoin:round}
+.f-top{fill:var(--face-top)}.f-left{fill:var(--face-left)}.f-right{fill:var(--face-right)}
+.end{margin-top:52px;padding-top:18px;border-top:3px solid var(--accent);
+  color:var(--muted);font-size:.95rem;font-style:italic}
+@media print{
+  :root{--bg:#fff;--fg:#000;--box:#fff;--rule:#bbb;--accent:#555;--accent-soft:#f2f2f2;--shadow:transparent;
+    --face-top:#fff;--face-left:#e0e0e0;--face-right:#c4c4c4}
+  body{font-size:11.5pt;padding:0}
+  .wrap{padding:0;max-width:none}
+  h2{page-break-after:avoid;break-after:avoid}
+  li,figure,.passage{page-break-inside:avoid;break-inside:avoid}
+  .no-print{display:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Puzzle Set One</h1>
+  <p class="sub">A mixed set of puzzles &middot; About 50 minutes &middot; Year 5</p>
+  <div class="namebar">
+    <span>Name:</span><span>Date:</span><span>Started:</span><span>Finished:</span>
+  </div>
+</header>
+
+<div class="intro">
+  <p><strong>Before you start.</strong> This is not a test and there is no pass
+  mark. It is a set of puzzles designed to find out what you already know, so
+  that everything we do afterwards is pitched at the right level for you.</p>
+  <p>Some of these will be easy. Some will cover things you have not been taught
+  yet &mdash; that is deliberate, and leaving one blank tells us something useful.
+  Do not worry about the ones you cannot do. Just show your working where you can,
+  so we can see how you were thinking.</p>
+  <p><strong>Only Part&nbsp;A is against the clock.</strong> Everything else you
+  can take at your own pace.</p>
+</div>
+
+<h2><span class="tag">Part A &middot; Maths</span>Number Sprint</h2>
+<p class="timing">&#9201; 4 minutes, strictly timed &middot; answer as many as you can, in order &middot; no calculator, no jottings</p>
+
+<ol class="sprint">
+  <li><span class="q">7 &times; 8 =</span><span class="ans"></span></li>
+  <li><span class="q">54 &divide; 6 =</span><span class="ans"></span></li>
+  <li><span class="q">12 &times; 7 =</span><span class="ans"></span></li>
+  <li><span class="q">9 &times; 6 =</span><span class="ans"></span></li>
+  <li><span class="q">144 &divide; 12 =</span><span class="ans"></span></li>
+  <li><span class="q">8 &times; 8 =</span><span class="ans"></span></li>
+  <li><span class="q">63 &divide; 7 =</span><span class="ans"></span></li>
+  <li><span class="q">11 &times; 12 =</span><span class="ans"></span></li>
+  <li><span class="q">6 &times; 7 =</span><span class="ans"></span></li>
+  <li><span class="q">81 &divide; 9 =</span><span class="ans"></span></li>
+  <li><span class="q">400 + 250 =</span><span class="ans"></span></li>
+  <li><span class="q">1000 &minus; 375 =</span><span class="ans"></span></li>
+  <li><span class="q">25 &times; 4 =</span><span class="ans"></span></li>
+  <li><span class="q">Half of 96 =</span><span class="ans"></span></li>
+  <li><span class="q">7 &times; 30 =</span><span class="ans"></span></li>
+  <li><span class="q">96 &divide; 8 =</span><span class="ans"></span></li>
+  <li><span class="q">Double 175 =</span><span class="ans"></span></li>
+  <li><span class="q">15 &times; 6 =</span><span class="ans"></span></li>
+  <li><span class="q">121 &divide; 11 =</span><span class="ans"></span></li>
+  <li><span class="q">200 &minus; 65 =</span><span class="ans"></span></li>
+</ol>
+
+<h2><span class="tag">Part B &middot; Maths</span>Mixed Questions</h2>
+<p class="timing">About 16 minutes &middot; show your working</p>
+
+<ol>
+  <li>Round <strong>47,381</strong> to the nearest thousand.<span class="lines"><i></i></span></li>
+
+  <li>At midnight the temperature was <strong>&minus;6&nbsp;&deg;C</strong>. By
+  noon it had risen by <strong>11&nbsp;degrees</strong>. What was the temperature
+  at noon?<span class="lines"><i></i></span></li>
+
+  <li>Work out <strong>3,284 &times; 6</strong>.<span class="lines"><i></i><i></i></span></li>
+
+  <li>Work out <strong>5 + 3 &times; 4</strong>.<span class="lines"><i></i></span></li>
+
+  <li>What is <strong>two thirds of 42</strong>?<span class="lines"><i></i></span></li>
+
+  <li>Work out <strong>&frac34; + &#8539;</strong>. Give your answer as a fraction.<span class="lines"><i></i></span></li>
+
+  <li>Find <strong>15% of 80</strong>.<span class="lines"><i></i></span></li>
+
+  <li>Write <strong>0.35</strong> as a fraction in its simplest form.<span class="lines"><i></i></span></li>
+
+  <li>A train leaves at <strong>14:37</strong>. The journey takes
+  <strong>1 hour and 48 minutes</strong>. At what time does it arrive?<span class="lines"><i></i></span></li>
+
+  <li>Two angles in a triangle are <strong>47&deg;</strong> and
+  <strong>68&deg;</strong>. What is the third angle?<span class="lines"><i></i></span></li>
+
+  <li>Share <strong>&pound;45</strong> between two people in the ratio
+  <strong>2&nbsp;:&nbsp;3</strong>.<span class="lines"><i></i></span></li>
+
+  <li>Here is a sequence: <strong>4, 7, 10, 13, &hellip;</strong>
+    <br>(a) What is the next term?
+    <br>(b) What is the 20th term?<span class="lines"><i></i><i></i></span></li>
+
+  <li>A shop sells pencils in packs of 8 for <strong>&pound;2.40</strong> a pack,
+  and rulers at <strong>65p</strong> each. Priya buys 3 packs of pencils and 4
+  rulers, and pays with a <strong>&pound;20</strong> note.
+  <br>How much change does she get?<span class="lines"><i></i><i></i><i></i></span></li>
+</ol>
+
+<h2><span class="tag">Part C &middot; English</span>Reading</h2>
+<p class="timing">About 16 minutes &middot; read the passage twice before you start answering</p>
+
+<div class="passage">
+  <h3>The Lamp Room</h3>
+  <p class="by">from a short story</p>
+  <p>Nobody had told Martha the lamp would be so loud. She had imagined a
+  lighthouse as a silent thing &mdash; a finger of white standing patiently in
+  the dark &mdash; but the mechanism above her head clicked and sighed and turned
+  like something breathing, and the whole tower seemed to lean into each gust off
+  the water.</p>
+  <p>Her grandfather moved around the lamp room without hurrying. Forty-one
+  years, he had said at supper, and not one night dark. He said it the way other
+  people mention the weather, which Martha had begun to understand was not
+  modesty at all but something closer to the opposite: a fact so large he had
+  stopped needing to decorate it.</p>
+  <p>&ldquo;Put your hand here,&rdquo; he said.</p>
+  <p>She pressed her palm to the brass housing. It was warm &mdash; warmer than
+  she expected, warm as an animal &mdash; and beneath the warmth she could feel
+  the turning, steady and unhurried. Three seconds, and then three seconds, and
+  then three seconds again.</p>
+  <p>&ldquo;Every lighthouse has its own rhythm,&rdquo; he said. &ldquo;Ours is
+  three. Down the coast at Ardmore, it&rsquo;s four and a pause. A captain out
+  there in the black can&rsquo;t see the rock, can&rsquo;t see the shore,
+  can&rsquo;t see us. But he counts. And if he counts to three, he knows exactly
+  where he is in the world.&rdquo;</p>
+  <p>Martha looked out at the water, which was not really water at this hour so
+  much as an absence &mdash; a great moving nothing pressed up against the glass.
+  Somewhere in it, she supposed, someone was counting.</p>
+  <p>She thought about that for a long time afterwards. Long after the tower was
+  automated, long after her grandfather had gone down the stairs for the last
+  time. It seemed to her a rare thing, to be so precisely and reliably yourself
+  that a stranger could find their way home by it.</p>
+</div>
+
+<ol>
+  <li>How many years had Martha&rsquo;s grandfather worked at the lighthouse?<span class="lines"><i></i></span></li>
+
+  <li>What is the rhythm of the lighthouse at Ardmore?<span class="lines"><i></i></span></li>
+
+  <li>In paragraph 2, the writer says her grandfather had &ldquo;stopped needing
+  to <strong>decorate</strong>&rdquo; the fact. What does <strong>decorate</strong>
+  mean here?<span class="lines"><i></i></span></li>
+
+  <li>Find and copy a word from the passage that means <strong>something that is
+  not there</strong>.<span class="lines"><i></i></span></li>
+
+  <li>Martha thinks her grandfather&rsquo;s tone &ldquo;was not modesty at all
+  but something closer to the opposite&rdquo;. What does she mean by this?<span class="lines"><i></i><i></i></span></li>
+
+  <li>How do we know the visit takes place at night? Give <strong>two</strong>
+  pieces of evidence from the passage.<span class="lines"><i></i><i></i></span></li>
+
+  <li>The writer describes the brass housing as &ldquo;warm as an
+  animal&rdquo;.
+  <br>(a) What is this kind of language called?
+  <br>(b) Why do you think the writer chose it?<span class="lines"><i></i><i></i></span></li>
+
+  <li>In your own words, what has Martha understood by the end of the passage?<span class="lines"><i></i><i></i></span></li>
+</ol>
+
+<h2><span class="tag">Part C &middot; English</span>Grammar &amp; Spelling</h2>
+
+<ol start="9">
+  <li>In &ldquo;standing <strong>patiently</strong> in the dark&rdquo;, what word
+  class is <strong>patiently</strong>?<span class="lines"><i></i></span></li>
+
+  <li>Copy out the <strong>subordinate clause</strong> in this sentence:
+  <br><em>Although the wind had dropped, the sea was still rough.</em><span class="lines"><i></i></span></li>
+
+  <li>Rewrite this sentence with the correct punctuation and capital letters:
+  <br><em>marthas grandfather said its four and a pause</em><span class="lines"><i></i><i></i></span></li>
+
+  <li>Three of these four words are spelt incorrectly. Write each one correctly.
+  <br><em>seperate &nbsp;&middot;&nbsp; definately &nbsp;&middot;&nbsp; occasion &nbsp;&middot;&nbsp; recieve</em><span class="lines"><i></i><i></i></span></li>
+
+  <li>Add the missing apostrophe:
+  <br><em>The three keepers quarters were at the base of the tower.</em><span class="lines"><i></i></span></li>
+</ol>
+
+<h2><span class="tag">Part D &middot; Reasoning</span>Words &amp; Logic</h2>
+<p class="timing">About 7 minutes</p>
+
+<ol>
+  <li>Which word is closest in meaning to <strong>ABUNDANT</strong>?
+    <ul class="opts"><li>a) scarce</li><li>b) plentiful</li><li>c) heavy</li><li>d) distant</li></ul>
+  </li>
+
+  <li>Which is the <strong>odd one out</strong>?
+    <ul class="opts"><li>a) oak</li><li>b) pine</li><li>c) willow</li><li>d) tulip</li><li>e) birch</li></ul>
+  </li>
+
+  <li>What comes next in this sequence?
+  <br><strong>AC &nbsp; EG &nbsp; IK &nbsp; MO &nbsp; ?</strong><span class="lines"><i></i></span></li>
+
+  <li>If <strong>FLAME</strong> is written in code as <strong>GMBNF</strong>,
+  how is <strong>TORCH</strong> written in the same code?<span class="lines"><i></i></span></li>
+
+  <li>A five-letter word is hidden across the end of one word and the start of
+  the next. Find it.
+  <br><em>We must plan every detail.</em><span class="lines"><i></i></span></li>
+
+  <li><strong>Bird</strong> is to <strong>nest</strong> as <strong>bee</strong>
+  is to &hellip;?<span class="lines"><i></i></span></li>
+
+  <li>Four children stand in a queue.
+  <br>Tom is behind Sam. Ana is in front of Sam. Ben is last.
+  <br>Who is <strong>first</strong>?<span class="lines"><i></i></span></li>
+
+  <li>If <strong>A=1, B=2, C=3, D=4, E=5</strong>, work out
+  <strong>(D &times; E) &minus; (B &times; C)</strong>.
+  Write your answer as a number.<span class="lines"><i></i></span></li>
+</ol>
+
+<h2><span class="tag">Part E &middot; Reasoning</span>Shapes &amp; Patterns</h2>
+<p class="timing">About 7 minutes &middot; circle the letter of your answer</p>
+
+<ol>
+  <li>Which shape comes next in the series?
+  <figure class="nvr-fig">
+  <svg viewBox="0 0 640 130" role="img" aria-label="A series of four polygons followed by a question mark.">
+    <polygon class="shape-line" points="60,24 93,81 27,81"/><polygon class="shape-solid" points="217,35 217,89 163,89 163,35"/><polygon class="shape-line" points="320,24 356,50 342,93 298,93 284,50"/><polygon class="shape-solid" points="469,29 488,62 469,95 431,95 412,62 431,29"/><text class="qmark" x="580" y="76">?</text>
+  </svg>
+  <svg viewBox="0 0 700 125" role="img" aria-label="Four answer options, A to D.">
+    <polygon class="shape-solid" points="105,15 125,35 125,65 105,85 75,85 55,65 55,35 75,15"/><text class="lbl" x="90" y="110">A</text><polygon class="shape-line" points="260,12 290,26 297,58 276,84 244,84 223,58 230,26"/><text class="lbl" x="260" y="110">B</text><polygon class="shape-solid" points="449,17 468,50 449,83 411,83 392,50 411,17"/><text class="lbl" x="430" y="110">C</text><polygon class="shape-line" points="615,15 635,35 635,65 615,85 585,85 565,65 565,35 585,15"/><text class="lbl" x="600" y="110">D</text>
+  </svg>
+  </figure>
+  </li>
+
+  <li>Which figure is the <strong>odd one out</strong>?
+  <figure class="nvr-fig">
+  <svg viewBox="0 0 700 130" role="img" aria-label="Five polygons, each containing a number of dots. Options A to E.">
+    <polygon class="shape-line" points="70,18 103,75 37,75"/><circle class="shape-fill" cx="70" cy="41" r="3.6"/><circle class="shape-fill" cx="85" cy="66" r="3.6"/><circle class="shape-fill" cx="55" cy="66" r="3.6"/><text class="lbl" x="70" y="116">A</text><polygon class="shape-line" points="237,29 237,83 183,83 183,29"/><circle class="shape-fill" cx="222" cy="46" r="3.6"/><circle class="shape-fill" cx="222" cy="70" r="3.6"/><circle class="shape-fill" cx="198" cy="70" r="3.6"/><circle class="shape-fill" cx="198" cy="46" r="3.6"/><text class="lbl" x="210" y="116">B</text><polygon class="shape-line" points="350,18 386,44 372,87 328,87 314,44"/><circle class="shape-fill" cx="350" cy="41" r="3.6"/><circle class="shape-fill" cx="366" cy="53" r="3.6"/><circle class="shape-fill" cx="360" cy="72" r="3.6"/><circle class="shape-fill" cx="340" cy="72" r="3.6"/><circle class="shape-fill" cx="334" cy="53" r="3.6"/><text class="lbl" x="350" y="116">C</text><polygon class="shape-line" points="509,23 528,56 509,89 471,89 452,56 471,23"/><circle class="shape-fill" cx="498" cy="43" r="3.6"/><circle class="shape-fill" cx="507" cy="58" r="3.6"/><circle class="shape-fill" cx="498" cy="73" r="3.6"/><circle class="shape-fill" cx="482" cy="73" r="3.6"/><circle class="shape-fill" cx="473" cy="58" r="3.6"/><circle class="shape-fill" cx="482" cy="43" r="3.6"/><text class="lbl" x="490" y="116">D</text><polygon class="shape-line" points="630,18 660,32 667,64 646,90 614,90 593,64 600,32"/><circle class="shape-fill" cx="630" cy="41" r="3.6"/><circle class="shape-fill" cx="646" cy="53" r="3.6"/><circle class="shape-fill" cx="640" cy="72" r="3.6"/><circle class="shape-fill" cx="620" cy="72" r="3.6"/><circle class="shape-fill" cx="614" cy="53" r="3.6"/><text class="lbl" x="630" y="116">E</text>
+  </svg>
+  </figure>
+  </li>
+
+  <li>The first two figures go together in a certain way. Which option completes
+  the second pair in the same way?
+  <figure class="nvr-fig">
+  <svg viewBox="0 0 640 120" role="img" aria-label="Large square with small circle is to small square with large circle, as large triangle with small circle is to question mark.">
+    <rect class="shape-line" x="22" y="18" width="76" height="76"/>
+    <circle class="shape-fill" cx="60" cy="56" r="9"/>
+    <text class="lbl-fg" x="128" y="62">is to</text>
+    <rect class="shape-line" x="170" y="38" width="42" height="42"/>
+    <circle class="shape-fill" cx="191" cy="59" r="16"/>
+    <text class="lbl-fg" x="252" y="62">as</text>
+    <polygon class="shape-line" points="330,12 368,78 292,78"/>
+    <circle class="shape-fill" cx="330" cy="56" r="9"/>
+    <text class="lbl-fg" x="420" y="62">is to</text>
+    <text class="qmark" x="480" y="72">?</text>
+  </svg>
+  <svg viewBox="0 0 700 125" role="img" aria-label="Four answer options, A to D.">
+    <polygon class="shape-line" points="90,8 128,74 52,74"/>
+    <circle class="shape-fill" cx="90" cy="52" r="9"/>
+    <text class="lbl" x="90" y="112">A</text>
+    <polygon class="shape-line" points="260,24 284,66 236,66"/>
+    <circle class="shape-fill" cx="260" cy="52" r="13"/>
+    <text class="lbl" x="260" y="112">B</text>
+    <polygon class="shape-line" points="430,8 468,74 392,74"/>
+    <circle class="shape-fill" cx="430" cy="52" r="21"/>
+    <text class="lbl" x="430" y="112">C</text>
+    <polygon class="shape-line" points="600,24 624,66 576,66"/>
+    <circle class="shape-fill" cx="600" cy="52" r="7"/>
+    <text class="lbl" x="600" y="112">D</text>
+  </svg>
+  </figure>
+  </li>
+
+  <li>Which figure completes the grid?
+  <figure class="nvr-fig">
+  <svg viewBox="0 0 700 250" role="img" aria-label="A three by three grid of shapes with the bottom right cell missing, and four options A to D.">
+    <rect class="cell" x="20" y="14" width="64" height="64"/>
+    <circle class="shape-line" cx="52" cy="46" r="20"/>
+    <rect class="cell" x="92" y="14" width="64" height="64"/>
+    <circle class="shape-line" cx="124" cy="46" r="20"/>
+    <path class="shape-fill" d="M124 26 a20 20 0 0 1 0 40 z"/>
+    <rect class="cell" x="164" y="14" width="64" height="64"/>
+    <circle class="shape-solid" cx="196" cy="46" r="20"/>
+
+    <rect class="cell" x="20" y="86" width="64" height="64"/>
+    <rect class="shape-line" x="34" y="100" width="36" height="36"/>
+    <rect class="cell" x="92" y="86" width="64" height="64"/>
+    <rect class="shape-line" x="106" y="100" width="36" height="36"/>
+    <rect class="shape-fill" x="124" y="100" width="18" height="36"/>
+    <rect class="cell" x="164" y="86" width="64" height="64"/>
+    <rect class="shape-solid" x="178" y="100" width="36" height="36"/>
+
+    <rect class="cell" x="20" y="158" width="64" height="64"/>
+    <polygon class="shape-line" points="52,172 72,208 32,208"/>
+    <rect class="cell" x="92" y="158" width="64" height="64"/>
+    <polygon class="shape-line" points="124,172 144,208 104,208"/>
+    <polygon class="shape-fill" points="124,172 144,208 124,208"/>
+    <rect class="cell" x="164" y="158" width="64" height="64"/>
+    <text class="qmark" x="196" y="203">?</text>
+
+    <line class="dash" x1="270" y1="20" x2="270" y2="220"/>
+
+    <polygon class="shape-solid" points="344,92 364,128 324,128"/>
+    <text class="lbl" x="344" y="152">A</text>
+    <polygon class="shape-line" points="454,92 474,128 434,128"/>
+    <text class="lbl" x="454" y="152">B</text>
+    <polygon class="shape-line" points="564,92 584,128 544,128"/>
+    <polygon class="shape-fill" points="564,92 584,128 564,128"/>
+    <text class="lbl" x="564" y="152">C</text>
+    <rect class="shape-solid" x="628" y="94" width="34" height="34"/>
+    <text class="lbl" x="645" y="152">D</text>
+  </svg>
+  </figure>
+  </li>
+
+  <li>Which option is the <strong>mirror image</strong> of the figure on the left,
+  reflected in the dotted line?
+  <figure class="nvr-fig">
+  <svg viewBox="0 0 700 150" role="img" aria-label="An L-shaped figure beside a vertical dotted mirror line, with four options A to D.">
+    <polygon class="shape-line" points="30,20 30,100 90,100 90,78 52,78 52,20"/>
+    <line class="dash" x1="128" y1="8" x2="128" y2="118"/>
+    <polygon class="shape-line" points="226,20 226,100 166,100 166,78 204,78 204,20"/>
+    <text class="lbl" x="196" y="132">A</text>
+    <polygon class="shape-line" points="320,20 320,100 380,100 380,78 342,78 342,20"/>
+    <text class="lbl" x="350" y="132">B</text>
+    <polygon class="shape-line" points="470,100 470,20 530,20 530,42 492,42 492,100"/>
+    <text class="lbl" x="500" y="132">C</text>
+    <polygon class="shape-line" points="640,100 640,20 580,20 580,42 618,42 618,100"/>
+    <text class="lbl" x="610" y="132">D</text>
+  </svg>
+  </figure>
+  </li>
+
+  <li>The diagram shows the <strong>net of a cube</strong>. When it is folded up,
+  which letter is on the face <strong>opposite C</strong>?
+  <figure class="nvr-fig">
+  <svg viewBox="0 0 400 220" role="img" aria-label="Cube net: a horizontal row of four squares labelled B, C, D, E, with square A above C and square F below C.">
+    <rect class="net" x="110" y="16" width="60" height="60"/><text class="lbl-fg" x="140" y="54">A</text>
+    <rect class="net" x="50" y="76" width="60" height="60"/><text class="lbl-fg" x="80" y="114">B</text>
+    <rect class="net" x="110" y="76" width="60" height="60"/><text class="lbl-fg" x="140" y="114">C</text>
+    <rect class="net" x="170" y="76" width="60" height="60"/><text class="lbl-fg" x="200" y="114">D</text>
+    <rect class="net" x="230" y="76" width="60" height="60"/><text class="lbl-fg" x="260" y="114">E</text>
+    <rect class="net" x="110" y="136" width="60" height="60"/><text class="lbl-fg" x="140" y="174">F</text>
+  </svg>
+  </figure>
+  <span class="lines"><i></i></span>
+  </li>
+
+  <li>This solid is built from small cubes, all the same size.
+  <strong>How many cubes</strong> were used altogether?
+  <br><em>No cube is floating &mdash; every cube rests on the ground or on
+  another cube.</em>
+  <figure class="nvr-fig">
+  <svg viewBox="0 0 320 185" role="img" aria-label="A solid built from small cubes, drawn in three dimensions.">
+    <polygon class="f-left" points="133,37 160,52 160,82 133,67"/><polygon class="f-right" points="187,37 160,52 160,82 187,67"/><polygon class="f-top" points="160,22 187,37 160,52 133,37"/><polygon class="f-left" points="160,82 187,97 187,127 160,112"/><polygon class="f-right" points="214,82 187,97 187,127 214,112"/><polygon class="f-top" points="187,67 214,82 187,97 160,82"/><polygon class="f-left" points="106,82 133,97 133,127 106,112"/><polygon class="f-right" points="160,82 133,97 133,127 160,112"/><polygon class="f-top" points="133,67 160,82 133,97 106,82"/><polygon class="f-left" points="133,97 160,112 160,142 133,127"/><polygon class="f-right" points="187,97 160,112 160,142 187,127"/><polygon class="f-top" points="160,82 187,97 160,112 133,97"/>
+  </svg>
+  </figure>
+  <span class="lines"><i></i></span>
+  </li>
+</ol>
+
+<p class="end">That&rsquo;s the end of the set. If you have time left, go back to
+anything you left blank and have another go &mdash; a sensible attempt is worth
+more to us than a gap.</p>
+
+</div>
+</body>
+</html>
