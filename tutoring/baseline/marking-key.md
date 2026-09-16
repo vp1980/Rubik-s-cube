@@ -4,12 +4,12 @@ For the tutor. Every question is mapped to a ladder code from
 `../skill/references/curriculum-ladders-y5.md`, so the first progress log builds
 straight from the results rather than from an impression.
 
-**Total: 66 marks** — Part A 20 · Part B 14 · Part C 17 · Part D 8 · Part E 7
+**Total: 67 marks** — Part A 20 · Part B 14 · Part C 18 · Part D 8 · Part E 7
 
 **The total is the least useful number on this page.** What matters is the
 section profile, the timings, and the wrong-answer patterns in §7. A child
-scoring 40/66 with a fluent sprint and weak inference needs a completely
-different programme from one scoring 40/66 the other way round.
+scoring 40/67 with a fluent sprint and weak inference needs a completely
+different programme from one scoring 40/67 the other way round.
 
 ---
 
@@ -84,9 +84,9 @@ term, and it is a (T) risk.*
 
 ---
 
-## 4. Part C — English (17 marks)
+## 4. Part C — English (18 marks)
 
-### Reading (10 marks)
+### Reading (11 marks)
 
 | Q | Answer | Code | Marks |
 |---|---|---|---|
