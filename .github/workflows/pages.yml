@@ -3,7 +3,7 @@ name: Publish the pupil paper
 on:
   push:
     branches: [claude/year-5-11plus-tutoring-o0qi5z]
-    paths: [docs/**, .github/workflows/pages.yml]
+    paths: [docs/**, index.html, lessons/**, reference/**, .github/workflows/pages.yml]
   workflow_dispatch:
 
 permissions:
@@ -27,8 +27,14 @@ jobs:
         uses: actions/configure-pages@v5
         with:
           enablement: true
+      - name: Assemble the site — the cube page at the root, the paper under /paper/
+        run: |
+          mkdir -p site/paper
+          cp index.html site/
+          cp -r lessons reference site/ 2>/dev/null || true
+          cp docs/*.html site/paper/
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: docs
+          path: site
       - id: deployment
         uses: actions/deploy-pages@v4
